@@ -1,4 +1,4 @@
-/*'use strict'
+'use strict'
 
 import jwt from 'jsonwebtoken'
 
@@ -43,4 +43,4 @@ export const isWorker = (req, res, next) => {
         return res.status(403).send({ message: 'Forbidden, only clients allowed' })
     }
     next()
-}*/
+}

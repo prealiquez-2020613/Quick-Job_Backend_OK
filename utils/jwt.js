@@ -1,4 +1,4 @@
-/*'use strict';
+'use strict';
 
 import  jwt  from "jsonwebtoken";
 
@@ -16,4 +16,4 @@ export const generateJwt = async(payload)=>{
         console.error(error);
         return error;
     }
-}*/
+}
