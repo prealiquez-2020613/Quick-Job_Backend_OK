@@ -11,6 +11,7 @@ import reviewRoutes from '../src/review/review.routes.js'
 import workerProfileRoutes from '../src/workerProfile/workerProfile.routes.js'
 import clientProfileRoutes from '../src/clientProfile/clientProfile.routes.js'
 import paymentRoutes from '../src/payment/payment.routes.js'
+import rechargeRoutes from '../src/recharge/recharge.routes.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
 
@@ -31,6 +32,7 @@ const routes = (app)=>{
     app.use('/v1/workerProfile', workerProfileRoutes);
     app.use('/v1/clientProfile', clientProfileRoutes);
     app.use('/v1/payment', paymentRoutes);
+    app.use('/v1/recharge', rechargeRoutes);
 };
 
 
