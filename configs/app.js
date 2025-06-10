@@ -8,6 +8,7 @@ import authRoutes from '../src/auth/auth.routes.js'
 import userRoutes from '../src/user/user.routes.js'
 import categoryRoutes from '../src/category/category.routes.js'
 import reviewRoutes from '../src/review/review.routes.js'
+import workerProfileRoutes from '../src/workerProfile/workerProfile.routes.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
 
@@ -25,6 +26,7 @@ const routes = (app)=>{
     app.use('/v1/user', userRoutes);
     app.use('/v1/category', categoryRoutes);
     app.use('/v1/review', reviewRoutes);
+    app.use('/v1/workerProfile', workerProfileRoutes);
 };
 
 
