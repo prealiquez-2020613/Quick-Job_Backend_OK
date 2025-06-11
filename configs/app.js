@@ -13,6 +13,7 @@ import clientProfileRoutes from '../src/clientProfile/clientProfile.routes.js'
 import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
+import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
 
