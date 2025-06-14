@@ -33,6 +33,9 @@ export const register = async (req, res) => {
             });
         }
 
+        if (data.ratingAverage) return res.status(403).send({ message: 'You cannot set the ratingAverage field here' });
+        if (data.status) return res.status(403).send({ message: 'You cannot set the ratingAverage field here' });
+
        
         let user = new User(data);
         user.password = await encrypt(user.password);
