@@ -40,6 +40,35 @@ const userSchema = Schema({
         enum: ['CLIENT', 'WORKER', 'ADMIN'],
         default: 'CLIENT'
     },
+    location: {
+        required: [true, 'Location is required'],
+        type: String,
+        enum: [
+            'Alta Verapaz', 'Baja Verapaz', 'Chimaltenango', 'Chiquimula', 'Escuintla', 'Guatemala', 
+            'Huehuetenango', 'Izabal', 'Jalapa', 'Jutiapa', 'Petén', 'Quetzaltenango', 'Quiché', 
+            'Retalhuleu', 'Sacatepéquez', 'San Marcos', 'Santa Rosa', 'Sololá', 'Suchitepéquez', 
+            'Totonicapán', 'Zacapa'
+        ],
+    },
+    category: {
+        required: [true, 'Category is required'],
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+    },
+    description: {
+        type: String,
+        maxLength: 500
+    },
+    experienceYears: {
+        type: Number,
+        default: 0
+    },
+    ratingAverage: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5
+    },
     userStatus: {
         type: Boolean,
         enum: [true, false]
