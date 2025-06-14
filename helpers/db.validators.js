@@ -1,4 +1,6 @@
 import User from '../src/user/user.model.js'
+import Category from '../src/category/category.model.js'
+
 
 export const findUser = async (id)=>{
     try {
@@ -26,3 +28,20 @@ export const existUsername = async(username)=>{
         throw new error(`Username ${username} already exist`);
     }
 };
+
+// Validador para verificar si el nombre de categoría ya existe
+export const categoryNameExists = async (name, { req }) => {
+    const existingCategory = await Category.findOne({ name: name.trim() })
+    
+
+    if (req.method === 'PUT' && req.params?.id) {
+        if (existingCategory && existingCategory._id.toString() !== req.params.id) {
+            throw new Error('Category name already exists')
+        }
+    } else if (existingCategory) {
+
+        throw new Error('Category name already exists')
+    }
+    
+    return true
+}
