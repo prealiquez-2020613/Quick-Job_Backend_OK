@@ -12,6 +12,7 @@ import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
 import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
+import clientReviewRoutes from '../src/clientReview/clientReview.routes.js'
 import {initializeDatabase} from './initSetup.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
@@ -29,6 +30,7 @@ const routes = (app)=>{
     app.use(authRoutes);
     app.use('/v1/user', userRoutes);
     app.use('/v1/category', categoryRoutes);
+    app.use('/v1/review', clientReviewRoutes);
     app.use('/v1/review', reviewRoutes);
     app.use('/v1/payment', paymentRoutes);
     app.use('/v1/recharge', rechargeRoutes);
