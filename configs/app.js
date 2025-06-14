@@ -30,12 +30,12 @@ const routes = (app)=>{
     app.use(authRoutes);
     app.use('/v1/user', userRoutes);
     app.use('/v1/category', categoryRoutes);
-    app.use('/v1/review', clientReviewRoutes);
+    app.use('/v1/clientReview', clientReviewRoutes);
     app.use('/v1/payment', paymentRoutes);
     app.use('/v1/recharge', rechargeRoutes);
     app.use('/v1/chat', chatRoutes);
     app.use('/v1/jobRequest', jobeReQuestRoutes);
-    app.use('/v1/jobRequest', workerReviewRoutes);
+    app.use('/v1/workerReview', workerReviewRoutes);
 };
 
 
