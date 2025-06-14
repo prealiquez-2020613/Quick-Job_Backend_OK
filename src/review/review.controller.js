@@ -1,30 +1,22 @@
 import Review from './review.model.js';
 import User from '../user/user.model.js';
-import WorkerProfile from '../workerProfile/workerProfile.model.js';
-import ClientProfile from '../clientProfile/clientProfile.model.js';
 
 // Función para actualizar el promedio de calificación de un trabajador o cliente
-const updateAverageRating = async (userId, isWorker) => {
+const updateAverageRating = async (userId) => {
   try {
-    const reviews = await Review.find(isWorker ? { worker: userId } : { client: userId });
+    const reviews = await Review.find({
+      $or: [{ worker: userId }, { client: userId }]
+    });
 
     if (reviews.length === 0) {
-      if (isWorker) {
-        await WorkerProfile.findOneAndUpdate({ user: userId }, { ratingAverage: 0 });
-      } else {
-        await ClientProfile.findOneAndUpdate({ user: userId }, { ratingAverage: 0 });
-      }
+      await User.findByIdAndUpdate(userId, { ratingAverage: 0 });
       return;
     }
 
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     const averageRating = totalRating / reviews.length;
 
-    if (isWorker) {
-      await WorkerProfile.findOneAndUpdate({ user: userId }, { ratingAverage: averageRating });
-    } else {
-      await ClientProfile.findOneAndUpdate({ user: userId }, { ratingAverage: averageRating });
-    }
+    await User.findByIdAndUpdate(userId, { ratingAverage: averageRating });
   } catch (error) {
     console.error('Error updating average rating:', error);
   }
@@ -34,7 +26,7 @@ const updateAverageRating = async (userId, isWorker) => {
 export const createReview = async (req, res) => {
   try {
     const { worker, rating, comment } = req.body;
-    const client = req.user.uid; 
+    const client = req.user.uid;
 
     if (!worker || !rating) {
       return res.status(400).send({ success: false, message: 'Worker and rating are required' });
@@ -63,7 +55,8 @@ export const createReview = async (req, res) => {
     const review = new Review({ client, worker, rating, comment });
     await review.save();
 
-    await updateAverageRating(worker, true);
+    await updateAverageRating(worker);
+    await updateAverageRating(client);
 
     return res.status(201).send({ success: true, message: 'Review submitted successfully', review });
   } catch (error) {
@@ -76,7 +69,7 @@ export const createReview = async (req, res) => {
 export const createReviewForClient = async (req, res) => {
   try {
     const { client, rating, comment } = req.body;
-    const worker = req.user.uid; 
+    const worker = req.user.uid;
 
     if (!client || !rating) {
       return res.status(400).send({ success: false, message: 'Client and rating are required' });
@@ -105,7 +98,8 @@ export const createReviewForClient = async (req, res) => {
     const review = new Review({ worker, client, rating, comment });
     await review.save();
 
-    await updateAverageRating(client, false);
+    await updateAverageRating(worker);
+    await updateAverageRating(client);
 
     return res.status(201).send({ success: true, message: 'Review submitted successfully', review });
   } catch (error) {
@@ -135,8 +129,8 @@ export const updateReview = async (req, res) => {
 
     await review.save();
 
-    await updateAverageRating(review.worker, true); 
-    await updateAverageRating(review.client, false);
+    await updateAverageRating(review.worker);
+    await updateAverageRating(review.client);
 
     return res.send({ success: true, message: 'Review updated successfully', review });
   } catch (error) {
@@ -165,8 +159,8 @@ export const deleteReview = async (req, res) => {
 
     await review.deleteOne();
 
-    await updateAverageRating(workerId, true);
-    await updateAverageRating(clientId, false);
+    await updateAverageRating(workerId);
+    await updateAverageRating(clientId);
 
     return res.send({ success: true, message: 'Review deleted successfully', review });
   } catch (error) {

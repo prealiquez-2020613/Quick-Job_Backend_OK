@@ -8,12 +8,11 @@ import authRoutes from '../src/auth/auth.routes.js'
 import userRoutes from '../src/user/user.routes.js'
 import categoryRoutes from '../src/category/category.routes.js'
 import reviewRoutes from '../src/review/review.routes.js'
-import workerProfileRoutes from '../src/workerProfile/workerProfile.routes.js'
-import clientProfileRoutes from '../src/clientProfile/clientProfile.routes.js'
 import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
 import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
+import {initializeDatabase} from './initSetup.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
 
@@ -31,11 +30,10 @@ const routes = (app)=>{
     app.use('/v1/user', userRoutes);
     app.use('/v1/category', categoryRoutes);
     app.use('/v1/review', reviewRoutes);
-    app.use('/v1/workerProfile', workerProfileRoutes);
-    app.use('/v1/clientProfile', clientProfileRoutes);
     app.use('/v1/payment', paymentRoutes);
     app.use('/v1/recharge', rechargeRoutes);
     app.use('/v1/chat', chatRoutes);
+    app.use('/v1/jobRequest', jobeReQuestRoutes);
 };
 
 
@@ -45,6 +43,7 @@ export const initServer = async()=>{
     try{
         configs(app) 
         routes(app)
+        await initializeDatabase();
         app.listen(process.env.PORT)
         console.log(`Server running in port ${process.env.PORT}`)
     }catch(err){

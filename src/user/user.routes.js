@@ -1,20 +1,35 @@
 import { Router } from 'express';
-import {
-    createUser,
-    getUsers,
-    getUserById,
-    updateUser,
-    deleteUser,
-    changeUserRole
+import { 
+    getAll, 
+    get, 
+    deleteAccount, 
+    deleteUser, 
+    updateUser, 
+    updatePassword, 
+    updateRole 
 } from './user.controller.js';
+
+import { 
+    validateJwt, 
+    isAdmin 
+} from '../../middlewares/validate.jwt.js';
+
+import { 
+    UpdateValidator, 
+    newPasswordValidation, 
+    deleteAccountValidation, 
+    updateRoleValidation 
+} from '../../helpers/validators.js';
 
 const api = Router();
 
-api.post('/createuser', createUser);
-api.get('/alluser', getUsers);
-api.get('/getuser/:id', getUserById);
-api.put('/updateuser/:id', updateUser);
-api.delete('/deleteuser/:id', deleteUser);
-api.patch('/usermode/:id', changeUserRole);
+// RUTAS PRIVADAS
+api.get('/getAllUsers', [validateJwt, isAdmin], getAll);
+api.get('/findUser/:id', [validateJwt, isAdmin], get);
+api.put('/deleteAccount', [validateJwt], [deleteAccountValidation], deleteAccount);
+api.put('/deleteUser/:userId', [validateJwt, isAdmin], deleteUser);
+api.put('/updateUser', [validateJwt, UpdateValidator], updateUser);
+api.put('/updateUserRole/:id', [validateJwt, isAdmin, updateRoleValidation], updateRole);
+api.put('/updatePasswordUser', [validateJwt, newPasswordValidation], updatePassword);
 
 export default api;

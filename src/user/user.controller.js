@@ -1,159 +1,146 @@
-import User from './user.model.js';
-import { encrypt, checkPassword } from '../../utils/encrypt.js';
+import User from './user.model.js'
+import { checkPassword, encrypt } from "../../utils/encrypt.js"
 
-// Crear un nuevo usuario
-export const createUser = async (req, res) => {
+// ELIMINAR CUENTA
+export const deleteAccount = async (req, res) => {
     try {
-        const { name, surname, username, email, password, phone, role } = req.body;
+        const userId = req.user.uid
+        const { password } = req.body
 
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Username or email already exists', success: false });
-        }
-
-        if (!['CLIENT', 'WORKER', 'ADMIN'].includes(role)) {
-            return res.status(400).json({ message: 'Invalid role', success: false });
-        }
-
-        const hashedPassword = await encrypt(password);
-
-        const newUser = new User({
-            name,
-            surname,
-            username,
-            email,
-            password: hashedPassword,
-            phone,
-            role,
-            userStatus: true
-        });
-
-        await newUser.save();
-
-        res.status(201).json({ message: 'User created successfully', success: true, user: newUser });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating user', error });
-    }
-};
-
-// Listar todos los usuarios
-export const getUsers = async (req, res) => {
-    try {
-        const { limit = 20, skip = 0 } = req.query;
-
-        const users = await User.find()
-            .skip(Number(skip))
-            .limit(Number(limit));
-
-        const total = await User.countDocuments();
-
-        res.status(200).json({
-            success: true,
-            message: 'Users found',
-            users,
-            total,
-            limit: Number(limit),
-            skip: Number(skip)
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching users', error });
-    }
-};
-
-// Obtener un solo usuario por ID
-export const getUserById = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const user = await User.findById(id);
-
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        res.status(200).json({ user });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching user', error });
-    }
-};
-
-// Actualizar un usuario
-export const updateUser = async (req, res) => {
-    const { id } = req.params;
-    const { name, surname, username, email, phone, newPassword, currentPassword } = req.body;
-
-    try {
-        const user = await User.findById(id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        user.name = name || user.name;
-        user.surname = surname || user.surname;
-        user.username = username || user.username;
-        user.email = email || user.email;
-        user.phone = phone || user.phone;
-
-        if (newPassword) {
-            if (!currentPassword) {
-                return res.status(400).json({ message: 'Current password is required to change password' });
-            }
-
-            const isMatch = await checkPassword(user.password, currentPassword);
-            if (!isMatch) return res.status(400).json({ message: 'Incorrect current password' });
-
-            user.password = await encrypt(newPassword);
-        }
-
-        await user.save();
-        res.status(200).json({ message: 'User updated successfully', user });
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating user', error });
-    }
-};
-
-// Eliminar un usuario
-export const deleteUser = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const user = await User.findByIdAndDelete(id);
-
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        res.status(200).json({ message: 'User deleted successfully', user });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting user', error });
-    }
-};
-
-// Cambiar el rol del usuario (solo entre CLIENT y WORKER)
-export const changeUserRole = async (req, res) => {
-    const { id } = req.params;
-    const { newRole } = req.body;
-
-    if (!['CLIENT', 'WORKER'].includes(newRole)) {
-        return res.status(400).json({ message: 'Invalid role. Must be CLIENT or WORKER.' });
-    }
-
-    try {
-        const user = await User.findById(id);
+        const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).send({ success: false, message: 'User not found' })
         }
 
-        if (user.role === 'ADMIN') {
-            return res.status(403).json({ message: 'Admins cannot change roles' });
-        }
+        if (user && await checkPassword(user.password, password)) {
+            await User.findByIdAndUpdate(userId, { userStatus: false }, { new: true })
+            return res.send({ success: true, message: 'User deleted successfully' })
+        };
 
-        if (user.role === newRole) {
-            return res.status(400).json({ message: `User already has the role ${newRole}` });
-        }
+        return res.status(404).send({ success: false, message: 'Wrong password' })
 
-        user.role = newRole;
-        await user.save();
-
-        return res.status(200).json({
-            message: `User role changed to ${newRole}`,
-            user
-        });
     } catch (error) {
-        return res.status(500).json({ message: 'Error changing user role', error });
+        console.error(error)
+        return res.status(500).send({ success: false, message: 'General error deleting account', error })
     }
 };
+
+// ELIMINAR USUARIO
+export const deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.params
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return res.status(404).send({ success: false, message: 'User not found' })
+        }
+
+        await User.findByIdAndUpdate(userId, { userStatus: false }, { new: true })
+        return res.send({ success: true, message: 'User deleted successfully' })
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ success: false, message: 'General error deleting user', error })
+    }
+};
+
+// ACTUALIZAR USUARIO
+export const updateUser = async (req, res) => {
+    try {
+        const id = req.user.uid
+        const newdata = req.body
+
+        if (newdata.password) return res.status(403).send({ message: 'You cannot update the password here' })
+        if (newdata.role) return res.status(403).send({ message: 'You cannot update the role here' })
+
+        const data = await User.findByIdAndUpdate(id, newdata, { new: true })
+
+        if (!data) return res.status(404).send({ success: false, message: 'User not found' })
+        return res.send({ success: true, message: 'User updated successfully', data })
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: 'General Error', error })
+    }
+};
+
+// ACTUALIZAR ROL
+export const updateRole = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { newRole } = req.body
+
+        const validRoles = ['ADMIN', 'CLIENT', 'WORKER']
+
+        if (!validRoles.includes(newRole.toUpperCase())) {
+            return res.status(400).send({ success: false, message: 'Roles can only be ADMIN, CLIENT, or WORKER' })
+        }
+
+        const user = await User.findById(id)
+        if (!user) {
+            return res.status(404).send({ success: false, message: 'User not found' })
+        }
+
+        user.role = newRole.toUpperCase()
+        await user.save()
+
+        return res.send({ success: true, message: 'User role updated successfully', user })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({ success: false, message: 'General Error', error })
+    }
+}
+
+// ACTUALIZAR CONTRASEÑA
+export const updatePassword = async (req, res) => {
+    try {
+        const id = req.user.uid
+        const { actualPassword, newPassword } = req.body
+
+        const user = await User.findById(id)
+        if (!user) return res.status(404).send({ message: 'User not found' })
+
+        if (user && await checkPassword(user.password, actualPassword)) {
+            user.password = await encrypt(newPassword)
+            await user.save()
+
+            return res.send({ success: true, message: 'Password Updated Successfully', user })
+        }
+
+        return res.status(404).send({ success: false, message: 'Wrong password' })
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ success: false, message: 'General Error', error })
+    }
+};
+
+// OBTENER TODOS LOS USUARIOS
+export const getAll = async (req, res) => {
+    try {
+        const { limit = 20, skip = 0 } = req.query
+        const users = await User.find().skip(skip).limit(limit)
+
+        if (users.length === 0) return res.status(404).send({ success: false, message: 'Users not found' })
+        return res.send({ success: true, message: 'Users found', users, total: users.length })
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({ success: false, message: 'General error', error })
+    }
+}
+
+// OBTENER UN USUARIO POR SU ID
+export const get = async (req, res) => {
+    try {
+        const { id } = req.params
+        const user = await User.findById(id)
+
+        if (!user) return res.status(404).send({ success: false, message: 'User not found' })
+        return res.send({ success: true, message: 'User found', user })
+
+    } catch (error) {
+        return res.status(500).send({ success: false, message: 'General Error', error })
+    }
+}
