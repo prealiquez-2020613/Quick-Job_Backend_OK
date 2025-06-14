@@ -11,6 +11,14 @@ export const findUser = async (id)=>{
     }
 };
 
+export const existEmail = async(email)=>{
+    const alreadyEmail = await User.findOne({email});
+    if(alreadyEmail){
+        console.error(`Email ${email} already exist`);
+        throw new error(`Email ${email} already exist`);
+    }
+};
+
 export const existUsername = async(username)=>{
     const alreadyUsername = await User.findOne({username});
     if(alreadyUsername){
