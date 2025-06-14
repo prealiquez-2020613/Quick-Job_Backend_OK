@@ -13,6 +13,7 @@ import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
 import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
 import clientReviewRoutes from '../src/clientReview/clientReview.routes.js'
+import workerReviewRoutes from '../src/workerReview/workerReview.routes.js'
 import {initializeDatabase} from './initSetup.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
@@ -36,6 +37,7 @@ const routes = (app)=>{
     app.use('/v1/recharge', rechargeRoutes);
     app.use('/v1/chat', chatRoutes);
     app.use('/v1/jobRequest', jobeReQuestRoutes);
+    app.use('/v1/jobRequest', workerReviewRoutes);
 };
 
 

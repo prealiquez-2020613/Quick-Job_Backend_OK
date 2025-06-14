@@ -113,8 +113,6 @@ export const deleteWorkerReview = async (req, res) => {
   }
 };
 
-import WorkerReview from './workerReview.model.js';
-
 // Obtener todas las reseñas de un trabajador
 export const getAllWorkerReviews = async (req, res) => {
   try {
