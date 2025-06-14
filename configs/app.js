@@ -7,7 +7,6 @@ import cors from 'cors'
 import authRoutes from '../src/auth/auth.routes.js'
 import userRoutes from '../src/user/user.routes.js'
 import categoryRoutes from '../src/category/category.routes.js'
-import reviewRoutes from '../src/review/review.routes.js'
 import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
@@ -32,7 +31,6 @@ const routes = (app)=>{
     app.use('/v1/user', userRoutes);
     app.use('/v1/category', categoryRoutes);
     app.use('/v1/review', clientReviewRoutes);
-    app.use('/v1/review', reviewRoutes);
     app.use('/v1/payment', paymentRoutes);
     app.use('/v1/recharge', rechargeRoutes);
     app.use('/v1/chat', chatRoutes);
