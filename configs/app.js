@@ -14,6 +14,7 @@ import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
 import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
+import {initializeDatabase} from './initSetup.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
 
@@ -45,6 +46,7 @@ export const initServer = async()=>{
     try{
         configs(app) 
         routes(app)
+        await initializeDatabase();
         app.listen(process.env.PORT)
         console.log(`Server running in port ${process.env.PORT}`)
     }catch(err){

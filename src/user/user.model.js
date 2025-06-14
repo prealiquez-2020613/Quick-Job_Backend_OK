@@ -51,7 +51,6 @@ const userSchema = Schema({
         ],
     },
     category: {
-        required: [true, 'Category is required'],
         type: Schema.Types.ObjectId,
         ref: 'Category',
     },
