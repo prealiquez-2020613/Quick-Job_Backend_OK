@@ -206,3 +206,55 @@ export const sendMessageValidator = [
         .isLength({ max: 1000 }).withMessage('Message text cannot exceed 1000 characters'),
     validateErrorWithoutImg
 ];
+
+// --- Worker Review ---
+export const createWorkerReviewValidator = [
+  body('worker', 'Worker ID is required and must be valid').notEmpty().isMongoId(),
+  body('client', 'Client ID is required and must be valid').notEmpty().isMongoId(),
+  body('rating', 'Rating is required and must be between 1 and 5').notEmpty().isFloat({ min: 1, max: 5 }),
+  body('comment')
+    .notEmpty().withMessage('Comment is required')
+    .isString()
+    .isLength({ max: 300 })
+    .withMessage('Comment cannot exceed 300 characters'),
+  validateErrorWithoutImg
+]
+
+export const updateWorkerReviewValidator = [
+  body('rating')
+    .optional()
+    .isFloat({ min: 1, max: 5 })
+    .withMessage('Rating must be between 1 and 5'),
+  body('comment')
+    .optional()
+    .isString()
+    .isLength({ max: 300 })
+    .withMessage('Comment cannot exceed 300 characters'),
+  validateErrorWithoutImg
+]
+
+// --- Client Review ---
+export const createClientReviewValidator = [
+  body('client', 'Client ID is required and must be valid').notEmpty().isMongoId(),
+  body('worker', 'Worker ID is required and must be valid').notEmpty().isMongoId(),
+  body('rating', 'Rating is required and must be between 1 and 5').notEmpty().isFloat({ min: 1, max: 5 }),
+  body('comment')
+    .notEmpty().withMessage('Comment is required')
+    .isString()
+    .isLength({ max: 300 })
+    .withMessage('Comment cannot exceed 300 characters'),
+  validateErrorWithoutImg
+]
+
+export const updateClientReviewValidator = [
+  body('rating')
+    .optional()
+    .isFloat({ min: 1, max: 5 })
+    .withMessage('Rating must be between 1 and 5'),
+  body('comment')
+    .optional()
+    .isString()
+    .isLength({ max: 300 })
+    .withMessage('Comment cannot exceed 300 characters'),
+  validateErrorWithoutImg
+]
