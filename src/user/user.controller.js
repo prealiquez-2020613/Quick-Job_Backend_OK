@@ -1,5 +1,6 @@
 import User from './user.model.js'
 import { checkPassword, encrypt } from "../../utils/encrypt.js"
+import cloudinary from '../../configs/cloudinary.js'
 
 // ELIMINAR CUENTA
 export const deleteAccount = async (req, res) => {
@@ -47,20 +48,41 @@ export const deleteUser = async (req, res) => {
 // ACTUALIZAR USUARIO
 export const updateUser = async (req, res) => {
     try {
-        const id = req.user.uid
-        const newdata = req.body
+        const id = req.user.uid;
+        const newdata = req.body;
 
-        if (newdata.password) return res.status(403).send({ message: 'You cannot update the password here' })
-        if (newdata.role) return res.status(403).send({ message: 'You cannot update the role here' })
+        if (newdata.password) return res.status(403).send({ message: 'You cannot update the password here' });
+        if (newdata.role) return res.status(403).send({ message: 'You cannot update the role here' });
 
-        const data = await User.findByIdAndUpdate(id, newdata, { new: true })
+        const user = await User.findById(id);
+        if (!user) return res.status(404).send({ success: false, message: 'User not found' });
 
-        if (!data) return res.status(404).send({ success: false, message: 'User not found' })
-        return res.send({ success: true, message: 'User updated successfully', data })
+        // Si se sube nueva imagen de perfil
+        if (req.file) {
+            const stream = cloudinary.uploader.upload_stream(
+                { folder: 'profileImages' },
+                async (error, result) => {
+                    if (error) {
+                        console.error('Cloudinary upload error:', error);
+                        return res.status(500).send({ success: false, message: 'Error uploading image' });
+                    }
+
+                    newdata.profileImage = result.secure_url;
+
+                    const updatedUser = await User.findByIdAndUpdate(id, newdata, { new: true });
+                    return res.send({ success: true, message: 'User updated successfully', data: updatedUser });
+                }
+            );
+            stream.end(req.file.buffer);
+        } else {
+            // Si no hay imagen nueva, solo actualiza los datos
+            const updatedUser = await User.findByIdAndUpdate(id, newdata, { new: true });
+            return res.send({ success: true, message: 'User updated successfully', data: updatedUser });
+        }
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send({ success: false, message: 'General Error', error })
+        return res.status(500).send({ success: false, message: 'General Error', error });
     }
 };
 
