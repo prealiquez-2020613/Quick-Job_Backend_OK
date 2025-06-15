@@ -1,0 +1,576 @@
+{
+	"info": {
+		"_postman_id": "1bdcb4a9-164c-4024-b1f7-31a1f8b2b84b",
+		"name": "Quick-Job",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37952067"
+	},
+	"item": [
+		{
+			"name": "Register & Loggin",
+			"item": [
+				{
+					"name": "clientRegister",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Ben",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Reilly",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "breilly",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "breilly@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "uSer@1522",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "CLIENT",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Guatemala",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "workerRegister",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Jonnhy",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Storm",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "jstorm",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "jstorm@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "uSer@1522",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "WORKER",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Guatemala",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "684db15bc71fd6e1c04f3f96",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Soy un plomero",
+									"type": "text"
+								},
+								{
+									"key": "experienceYears",
+									"value": "25",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.setGlobalVariable('token', data.token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "identifier",
+									"value": "jstorm",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "uSer@1522",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/login",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "addReview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client",
+									"value": "684db1f6c71fd6e1c04f3f9a",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "Buen empleador",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/review/createReviewForClient",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"review",
+								"createReviewForClient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addReview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client",
+									"value": "684db1f6c71fd6e1c04f3f9a",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "Buen empleador",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/review/createReviewForClient",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"review",
+								"createReviewForClient"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payemnt Copy",
+			"item": [
+				{
+					"name": "Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "250",
+									"type": "text"
+								},
+								{
+									"key": "method",
+									"value": "CARD",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "JOB",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/payment/create",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"payment",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mypayment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:5400/v1/payment/my-payments",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"payment",
+								"my-payments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recharge Copy",
+			"item": [
+				{
+					"name": "Addrecharge",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "150",
+									"type": "text"
+								},
+								{
+									"key": "method",
+									"value": "CARD",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/recharge/add",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"recharge",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetRecharge",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "identifier",
+									"value": "alanrodas038@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "Ellos123!a",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/recharge/info",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"recharge",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetRecharge Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "jobAmount",
+									"value": "200",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Ellos123!a",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/recharge/commission",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"recharge",
+								"commission"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
