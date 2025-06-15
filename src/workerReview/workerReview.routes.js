@@ -5,12 +5,16 @@ import {
   deleteWorkerReview,
   getAllWorkerReviews
 } from './workerReview.controller.js';
+import {
+  createWorkerReviewValidator,
+  updateWorkerReviewValidator
+} from '../../helpers/validators.js';
 import { validateJwt } from '../../middlewares/validate.jwt.js';
 
 const api = Router();
 
-api.post('/createWorkerReview', [validateJwt], createWorkerReview);
-api.put('/updateWorkerReview/:id', [validateJwt], updateWorkerReview);
+api.post('/createWorkerReview', [validateJwt, createWorkerReviewValidator], createWorkerReview);
+api.put('/updateWorkerReview/:id', [validateJwt, updateWorkerReviewValidator], updateWorkerReview);
 api.delete('/deleteWorkerReview/:id', [validateJwt], deleteWorkerReview);
 api.get('/reviews/worker/:workerId', [validateJwt], getAllWorkerReviews);
 
