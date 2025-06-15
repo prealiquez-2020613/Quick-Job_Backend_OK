@@ -4,7 +4,9 @@ import User from '../user/user.model.js';
 // Función para actualizar el promedio de calificación de un trabajador
 const updateAverageRating = async (userId) => {
   try {
-    const reviews = await WorkerReview.find({ worker: userId });
+    const reviews = await WorkerReview.find({
+      $or: [{ worker: userId }, { client: userId }]
+    });
 
     if (reviews.length === 0) {
       await User.findByIdAndUpdate(userId, { ratingAverage: 0 });
@@ -37,7 +39,14 @@ export const createWorkerReview = async (req, res) => {
       return res.status(404).send({ success: false, message: 'Worker or client not found' });
     }
 
-    // Verificar si el trabajador ya ha reseñado a este cliente
+    if (workerUser.role !== 'WORKER') {
+      return res.status(403).send({ success: false, message: 'Only WORKER users can submit reviews' });
+    }
+
+    if (clientUser.role !== 'CLIENT') {
+      return res.status(403).send({ success: false, message: 'Only CLIENT users can receive reviews' });
+    }
+
     const existingReview = await WorkerReview.findOne({ worker, client });
     if (existingReview) {
       return res.status(400).send({ success: false, message: 'You already reviewed this client' });
