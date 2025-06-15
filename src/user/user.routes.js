@@ -20,6 +20,8 @@ import {
     deleteAccountValidation, 
     updateRoleValidation 
 } from '../../helpers/validators.js';
+import upload from '../../middlewares/multer.js'
+import cloudinary from '../../configs/cloudinary.js'
 
 const api = Router();
 
@@ -28,7 +30,7 @@ api.get('/getAllUsers', [validateJwt, isAdmin], getAll);
 api.get('/findUser/:id', [validateJwt, isAdmin], get);
 api.put('/deleteAccount', [validateJwt], [deleteAccountValidation], deleteAccount);
 api.put('/deleteUser/:userId', [validateJwt, isAdmin], deleteUser);
-api.put('/updateUser', [validateJwt, UpdateValidator], updateUser);
+api.put('/updateUser', [validateJwt, upload.single('image'), UpdateValidator], updateUser);
 api.put('/updateUserRole/:id', [validateJwt, isAdmin, updateRoleValidation], updateRole);
 api.put('/updatePasswordUser', [validateJwt, newPasswordValidation], updatePassword);
 
