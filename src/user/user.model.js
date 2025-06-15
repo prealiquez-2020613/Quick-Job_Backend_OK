@@ -62,6 +62,9 @@ const userSchema = Schema({
         type: Number,
         default: 0
     },
+    profileImage: {
+        type: String
+    },
     ratingAverage: {
         type: Number,
         default: 0,
