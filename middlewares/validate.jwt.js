@@ -40,7 +40,7 @@ export const isClient = (req, res, next) => {
 
 export const isWorker = (req, res, next) => {
     if (req.user.role !== 'WORKER') {
-        return res.status(403).send({ message: 'Forbidden, only clients allowed' })
+        return res.status(403).send({ message: 'Forbidden, only worker allowed' })
     }
     next()
 }
