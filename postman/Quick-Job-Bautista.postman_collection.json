@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "b8c8d042-18c4-4c23-a8a9-0200b02103ed",
+		"name": "Chat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37952210"
+	},
+	"item": [
+		{
+			"name": "New chat",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "participantId",
+							"value": "684b57bfbfb21ae1aa67a766",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5400/v1/chat/createchat",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5400",
+					"path": [
+						"v1",
+						"chat",
+						"createchat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Message",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
