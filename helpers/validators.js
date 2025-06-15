@@ -184,3 +184,25 @@ export const updateJobRequestStatusValidator = [
     .notEmpty()
     .isIn(['CONFIRMED', 'CANCELLED', 'COMPLETED'])
 ];
+
+export const createOrGetChatValidator = [
+  body('participantId')
+    .notEmpty()
+    .withMessage('Participant ID is required')
+    .bail()
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage('Participant ID must be a valid Mongo ID'),
+  validateErrorWithoutImg
+];
+
+export const sendMessageValidator = [
+    body('chatId', 'Chat ID is required')
+        .notEmpty()
+        .custom(value => mongoose.Types.ObjectId.isValid(value))
+        .withMessage('Chat ID must be a valid Mongo ID'),
+    body('text', 'Message text is required')
+        .notEmpty()
+        .isString().withMessage('Text must be a string')
+        .isLength({ max: 1000 }).withMessage('Message text cannot exceed 1000 characters'),
+    validateErrorWithoutImg
+];
