@@ -1,6 +1,7 @@
 import User from '../user/user.model.js';
 import { checkPassword, encrypt } from '../../utils/encrypt.js';
 import { generateJwt } from '../../utils/jwt.js';
+import cloudinary from '../../configs/cloudinary.js'
 
 //test
 export const test = (req, res)=>{
@@ -11,9 +12,8 @@ export const test = (req, res)=>{
 // REGISTRO
 export const register = async (req, res) => {
     try {
-        let data = req.body;
+        const data = req.body;
 
-       
         if (!['CLIENT', 'WORKER', 'ADMIN'].includes(data.role)) {
             return res.status(400).send({
                 success: false,
@@ -21,7 +21,6 @@ export const register = async (req, res) => {
             });
         }
 
-      
         const existingUser = await User.findOne({
             $or: [{ email: data.email }, { username: data.username }]
         });
@@ -34,26 +33,52 @@ export const register = async (req, res) => {
         }
 
         if (data.ratingAverage) return res.status(403).send({ message: 'You cannot set the ratingAverage field here' });
-        if (data.status) return res.status(403).send({ message: 'You cannot set the ratingAverage field here' });
+        if (data.status) return res.status(403).send({ message: 'You cannot set the userStatus field here' });
 
-       
-        let user = new User(data);
-        user.password = await encrypt(user.password);
-        user.userStatus = true;
+        data.password = await encrypt(data.password);
+        data.userStatus = true;
 
-        await user.save();
+        // Si hay imagen, subir a Cloudinary
+        if (req.file) {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: 'profileImages' },
+                async (error, result) => {
+                    if (error) {
+                        console.error('Error uploading image:', error);
+                        return res.status(500).send({ success: false, message: 'Image upload failed' });
+                    }
 
-        return res.send({
-            success: true,
-            message: `Registered successfully, can be logged with username: ${user.username}`
-        });
+                    data.profileImage = result.secure_url;
+
+                    const user = new User(data);
+                    await user.save();
+
+                    return res.send({
+                        success: true,
+                        message: `Registered successfully, can be logged with username: ${user.username}`,
+                        imageUrl: result.secure_url
+                    });
+                }
+            );
+
+            uploadStream.end(req.file.buffer);
+        } else {
+            // Si no hay imagen, solo crear el usuario
+            const user = new User(data);
+            await user.save();
+
+            return res.send({
+                success: true,
+                message: `Registered successfully, can be logged with username: ${user.username}`
+            });
+        }
 
     } catch (err) {
         console.error(err);
         return res.status(500).send({
             success: false,
             message: 'General error with registering user',
-            err 
+            err
         });
     }
 };
