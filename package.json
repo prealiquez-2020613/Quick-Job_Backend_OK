@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch index.js"
-    
   },
   "keywords": [
     "Employment",
@@ -16,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "argon2": "^0.43.0",
+    "cloudinary": "^2.6.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express-rate-limit": "^7.5.0",

@@ -20,6 +20,7 @@ export const registerValidator = [
     body('category', 'Category is required and must be a valid ID').optional().notEmpty().isMongoId(),
     body('description', 'Description must not exceed 500 characters').optional().notEmpty().isLength({ max: 500 }),
     body('experienceYears', 'Experience years must be a number').optional().notEmpty().isInt({ min: 0 }),
+    body('profileImage', 'Profile Picture cannot be empty').optional().notEmpty(),
     validateErrorWithoutImg
 ];
 
@@ -47,6 +48,7 @@ export const UpdateValidator = [
     body('category', 'Category is required and must be a valid ID').optional().notEmpty().isMongoId(),
     body('description', 'Description must not exceed 500 characters').optional().notEmpty().isLength({ max: 500 }),
     body('experienceYears', 'Experience years must be a number').optional().notEmpty().isInt({ min: 0 }),
+    body('profileImage', 'Profile Picture cannot be empty').optional().notEmpty(),
     validateErrorWithoutImg
 ];
 
