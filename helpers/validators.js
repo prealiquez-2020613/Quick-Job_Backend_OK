@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 import {validateErrorWithoutImg} from './validate.error.js'
-import {existEmail, existUsername} from './db.validators.js'
+import {existEmail, existUsername, findUser} from './db.validators.js'
 
 // Validator para registro del usuario
 export const registerValidator = [
@@ -67,4 +67,49 @@ export const deleteAccountValidation = [
 export const updateRoleValidation = [
     body('newRole', 'Role is required').notEmpty().isIn(['ADMIN', 'CLIENT', 'WORKER']).withMessage('Role must be one of ADMIN, CLIENT, or WORKER'),
     validateErrorWithoutImg
+];
+
+
+// Validator para crear un pago
+export const createPaymentValidator = [
+  body('amount', 'Amount is required and must be a positive number')
+    .notEmpty()
+    .isFloat({ min: 0.01 }),
+
+  body('method', 'Payment method must be one of CARD, PAYPAL, or TRANSFER')
+    .notEmpty()
+    .isIn(['CARD', 'PAYPAL', 'TRANSFER']),
+
+  body('type', 'Payment type must be one of RECHARGE, JOB, or COMMISSION')
+    .notEmpty()
+    .isIn(['RECHARGE', 'JOB', 'COMMISSION']),
+
+  body('user', 'User ID must be a valid Mongo ID')
+    .optional()
+    .isMongoId()
+    .bail()
+    .custom(findUser),
+
+  validateErrorWithoutImg
+];
+
+// Validator para crear una recarga (addRecharge)
+export const rechargeCreateValidator = [
+  body('amount', 'Amount is required and must be a number greater than 0')
+    .notEmpty()
+    .isFloat({ min: 0.01 }),
+
+  body('method', 'Method is required and must be one of CARD, PAYPAL, or TRANSFER')
+    .notEmpty()
+    .isIn(['CARD', 'PAYPAL', 'TRANSFER']),
+
+  validateErrorWithoutImg
+];
+
+export const discountCommissionValidator = [
+  body('jobAmount', 'Job amount is required and must be a number greater than 0')
+    .notEmpty()
+    .isFloat({ min: 0.01 }),
+
+  validateErrorWithoutImg
 ];
