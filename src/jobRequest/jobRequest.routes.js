@@ -9,12 +9,14 @@ import {
 
 import { validateJwt, isClient, isWorker } from '../../middlewares/validate.jwt.js';
 
+import { createJobRequestValidator, updateJobRequestStatusValidator } from '../../helpers/validators.js';
+
 const router = Router();
 
-router.post('/jobrequests', [validateJwt, isClient], createJobRequest);
+router.post('/jobrequests', [createJobRequestValidator, validateJwt, isClient], createJobRequest);
 router.get('/jobrequests/client', [validateJwt, isClient], getClientJobRequests);
 router.get('/jobrequests/worker', [validateJwt, isWorker], getWorkerJobRequests);
-router.put('/jobrequests/:id/status', [validateJwt, isWorker], updateJobRequestStatus);
+router.put('/jobrequests/:id/status', [updateJobRequestStatusValidator, validateJwt, isWorker], updateJobRequestStatus);
 router.delete('/deletejobrequests/:id', [validateJwt, isClient], deleteJobRequest);
 
 export default router;

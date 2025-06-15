@@ -10,7 +10,7 @@ import categoryRoutes from '../src/category/category.routes.js'
 import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
-import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
+import jobRequestRoutes from '../src/jobRequest/jobRequest.routes.js'
 import clientReviewRoutes from '../src/clientReview/clientReview.routes.js'
 import workerReviewRoutes from '../src/workerReview/workerReview.routes.js'
 import {initializeDatabase} from './initSetup.js'
@@ -34,7 +34,7 @@ const routes = (app)=>{
     app.use('/v1/payment', paymentRoutes);
     app.use('/v1/recharge', rechargeRoutes);
     app.use('/v1/chat', chatRoutes);
-    app.use('/v1/jobRequest', jobeReQuestRoutes);
+    app.use('/v1/jobRequest', jobRequestRoutes);
     app.use('/v1/workerReview', workerReviewRoutes);
 };
 

@@ -1,0 +1,475 @@
+{
+	"info": {
+		"_postman_id": "0163605d-159c-4909-8caf-eb0e31f908a3",
+		"name": "Quick-Job",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37952140"
+	},
+	"item": [
+		{
+			"name": "Register & Loggin",
+			"item": [
+				{
+					"name": "clientRegister",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Ben",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Urich",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "burich",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "burich@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "uSer@1522",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "CLIENT",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Guatemala",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "workerRegister",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Jonnhy",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Storm",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "jstorm",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "jstorm@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "uSer@1522",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "WORKER",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Guatemala",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "684db15bc71fd6e1c04f3f96",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Soy un plomero",
+									"type": "text"
+								},
+								{
+									"key": "experienceYears",
+									"value": "25",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);\r",
+									"postman.setGlobalVariable('token', data.token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "identifier",
+									"value": "jstorm",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "uSer@1522",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/login",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "addReviewForWorker",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "worker",
+									"value": "684dbac71807d7cb9290bf10",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "Buen trabajador",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/clientReview/createClientReview",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"clientReview",
+								"createClientReview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addReviewForClient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client",
+									"value": "684db1f6c71fd6e1c04f3f9a",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "Buen empleador",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/workerReview/createWorkerReview",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"workerReview",
+								"createWorkerReview"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "JobRequests",
+			"item": [
+				{
+					"name": "Add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "worker",
+									"value": "684e28e376bdb04ffb265d29",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Safsfda",
+									"type": "text"
+								},
+								{
+									"key": "agreedPrice",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/jobRequest/jobrequests",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"jobRequest",
+								"jobrequests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "worker",
+									"value": "684e28e376bdb04ffb265d29",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Safsfda12",
+									"type": "text"
+								},
+								{
+									"key": "agreedPrice",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "CONFIRMED",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5400/v1/jobRequest/jobrequests/684e28dd76bdb04ffb265d24/status",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"v1",
+								"jobRequest",
+								"jobrequests",
+								"684e28dd76bdb04ffb265d24",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

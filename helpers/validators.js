@@ -166,3 +166,19 @@ export const deleteCategoryValidator = [
         .withMessage('Category ID must be a valid MongoDB ObjectId'),
         validateErrorWithoutImg
 ];
+
+// Validator para crear JobRequest
+export const createJobRequestValidator = [
+  body('worker', 'Worker ID is required and must be valid').notEmpty().custom(validateErrorWithoutImg),
+  body('description', 'Description is required').notEmpty(),
+  body('agreedPrice', 'Agreed price is required and must be a number greater than 0')
+    .notEmpty()
+    .isFloat({ gt: 0 }).withMessage('Agreed price must be greater than 0')
+];
+
+// Validator para actualizar JobRequest
+export const updateJobRequestStatusValidator = [
+  body('status', 'Status is required and must be one of: CONFIRMED, CANCELLED, COMPLETED')
+    .notEmpty()
+    .isIn(['CONFIRMED', 'CANCELLED', 'COMPLETED'])
+];
