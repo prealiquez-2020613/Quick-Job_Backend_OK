@@ -24,17 +24,17 @@
 								},
 								{
 									"key": "surname",
-									"value": "Reilly",
+									"value": "Urich",
 									"type": "text"
 								},
 								{
 									"key": "username",
-									"value": "breilly",
+									"value": "burich",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "breilly@gmail.com",
+									"value": "burich@gmail.com",
 									"type": "text"
 								},
 								{
@@ -212,7 +212,7 @@
 			"name": "Review",
 			"item": [
 				{
-					"name": "addReview",
+					"name": "addReviewForWorker",
 					"event": [
 						{
 							"listen": "test",
@@ -248,39 +248,39 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "client",
-									"value": "684db1f6c71fd6e1c04f3f9a",
+									"key": "worker",
+									"value": "684dbac71807d7cb9290bf10",
 									"type": "text"
 								},
 								{
 									"key": "rating",
-									"value": "5",
+									"value": "4",
 									"type": "text"
 								},
 								{
 									"key": "comment",
-									"value": "Buen empleador",
+									"value": "Buen trabajador",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "localhost:5400/v1/review/createReviewForClient",
+							"raw": "localhost:5400/v1/clientReview/createClientReview",
 							"host": [
 								"localhost"
 							],
 							"port": "5400",
 							"path": [
 								"v1",
-								"review",
-								"createReviewForClient"
+								"clientReview",
+								"createClientReview"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "addReview",
+					"name": "addReviewForClient",
 					"event": [
 						{
 							"listen": "test",
@@ -333,15 +333,15 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:5400/v1/review/createReviewForClient",
+							"raw": "localhost:5400/v1/workerReview/createWorkerReview",
 							"host": [
 								"localhost"
 							],
 							"port": "5400",
 							"path": [
 								"v1",
-								"review",
-								"createReviewForClient"
+								"workerReview",
+								"createWorkerReview"
 							]
 						}
 					},

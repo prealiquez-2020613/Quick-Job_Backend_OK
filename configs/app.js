@@ -7,11 +7,12 @@ import cors from 'cors'
 import authRoutes from '../src/auth/auth.routes.js'
 import userRoutes from '../src/user/user.routes.js'
 import categoryRoutes from '../src/category/category.routes.js'
-import reviewRoutes from '../src/review/review.routes.js'
 import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
 import jobeReQuestRoutes from '../src/jobRequest/jobRequest.routes.js'
+import clientReviewRoutes from '../src/clientReview/clientReview.routes.js'
+import workerReviewRoutes from '../src/workerReview/workerReview.routes.js'
 import {initializeDatabase} from './initSetup.js'
 
 import { limiter } from '../middlewares/rate.limit.js'
@@ -29,11 +30,12 @@ const routes = (app)=>{
     app.use(authRoutes);
     app.use('/v1/user', userRoutes);
     app.use('/v1/category', categoryRoutes);
-    app.use('/v1/review', reviewRoutes);
+    app.use('/v1/clientReview', clientReviewRoutes);
     app.use('/v1/payment', paymentRoutes);
     app.use('/v1/recharge', rechargeRoutes);
     app.use('/v1/chat', chatRoutes);
     app.use('/v1/jobRequest', jobeReQuestRoutes);
+    app.use('/v1/workerReview', workerReviewRoutes);
 };
 
 

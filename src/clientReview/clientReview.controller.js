@@ -1,10 +1,10 @@
-import Review from './review.model.js';
+import ClientReview from './clientReview.model.js';
 import User from '../user/user.model.js';
 
-// Función para actualizar el promedio de calificación de un trabajador o cliente
+// Función para actualizar el promedio de calificación de un cliente
 const updateAverageRating = async (userId) => {
   try {
-    const reviews = await Review.find({
+    const reviews = await ClientReview.find({
       $or: [{ worker: userId }, { client: userId }]
     });
 
@@ -23,7 +23,7 @@ const updateAverageRating = async (userId) => {
 };
 
 // Crear una reseña de un cliente para un trabajador
-export const createReview = async (req, res) => {
+export const createClientReview = async (req, res) => {
   try {
     const { worker, rating, comment } = req.body;
     const client = req.user.uid;
@@ -47,16 +47,15 @@ export const createReview = async (req, res) => {
       return res.status(403).send({ success: false, message: 'Only WORKER users can receive reviews' });
     }
 
-    const existingReview = await Review.findOne({ client, worker });
+    const existingReview = await ClientReview.findOne({ client, worker });
     if (existingReview) {
       return res.status(400).send({ success: false, message: 'You already reviewed this worker' });
     }
 
-    const review = new Review({ client, worker, rating, comment });
+    const review = new ClientReview({ client, worker, rating, comment });
     await review.save();
 
     await updateAverageRating(worker);
-    await updateAverageRating(client);
 
     return res.status(201).send({ success: true, message: 'Review submitted successfully', review });
   } catch (error) {
@@ -65,62 +64,19 @@ export const createReview = async (req, res) => {
   }
 };
 
-// Crear una reseña de un trabajador para un cliente
-export const createReviewForClient = async (req, res) => {
-  try {
-    const { client, rating, comment } = req.body;
-    const worker = req.user.uid;
-
-    if (!client || !rating) {
-      return res.status(400).send({ success: false, message: 'Client and rating are required' });
-    }
-
-    const workerUser = await User.findById(worker);
-    const clientUser = await User.findById(client);
-
-    if (!workerUser || !clientUser) {
-      return res.status(404).send({ success: false, message: 'Worker or client not found' });
-    }
-
-    if (workerUser.role !== 'WORKER') {
-      return res.status(403).send({ success: false, message: 'Only WORKER users can submit reviews' });
-    }
-
-    if (clientUser.role !== 'CLIENT') {
-      return res.status(403).send({ success: false, message: 'Only CLIENT users can receive reviews' });
-    }
-
-    const existingReview = await Review.findOne({ worker, client });
-    if (existingReview) {
-      return res.status(400).send({ success: false, message: 'You already reviewed this client' });
-    }
-
-    const review = new Review({ worker, client, rating, comment });
-    await review.save();
-
-    await updateAverageRating(worker);
-    await updateAverageRating(client);
-
-    return res.status(201).send({ success: true, message: 'Review submitted successfully', review });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send({ success: false, message: 'Error submitting review', error });
-  }
-};
-
-// Actualizar una reseña existente
-export const updateReview = async (req, res) => {
+// Actualizar una reseña de un cliente para un trabajador
+export const updateClientReview = async (req, res) => {
   try {
     const { id } = req.params;
     const { rating, comment } = req.body;
     const loggedUserId = req.user.uid;
 
-    const review = await Review.findById(id);
+    const review = await ClientReview.findById(id);
     if (!review) {
       return res.status(404).send({ success: false, message: 'Review not found' });
     }
 
-    if (review.client.toString() !== loggedUserId && review.worker.toString() !== loggedUserId) {
+    if (review.client.toString() !== loggedUserId) {
       return res.status(403).send({ success: false, message: 'You can only update your own reviews' });
     }
 
@@ -130,7 +86,6 @@ export const updateReview = async (req, res) => {
     await review.save();
 
     await updateAverageRating(review.worker);
-    await updateAverageRating(review.client);
 
     return res.send({ success: true, message: 'Review updated successfully', review });
   } catch (error) {
@@ -139,28 +94,26 @@ export const updateReview = async (req, res) => {
   }
 };
 
-// Eliminar reseña
-export const deleteReview = async (req, res) => {
+// Eliminar una reseña de un cliente para un trabajador
+export const deleteClientReview = async (req, res) => {
   try {
     const { id } = req.params;
     const loggedUserId = req.user.uid;
 
-    const review = await Review.findById(id);
+    const review = await ClientReview.findById(id);
     if (!review) {
       return res.status(404).send({ success: false, message: 'Review not found' });
     }
 
-    if (review.client.toString() !== loggedUserId && review.worker.toString() !== loggedUserId) {
+    if (review.client.toString() !== loggedUserId) {
       return res.status(403).send({ success: false, message: 'You can only delete your own reviews' });
     }
 
     const workerId = review.worker;
-    const clientId = review.client;
 
     await review.deleteOne();
 
     await updateAverageRating(workerId);
-    await updateAverageRating(clientId);
 
     return res.send({ success: true, message: 'Review deleted successfully', review });
   } catch (error) {
@@ -169,32 +122,21 @@ export const deleteReview = async (req, res) => {
   }
 };
 
-// Obtener todas las reseñas de un trabajador
-export const getReviewsByWorker = async (req, res) => {
-  try {
-    const { workerId } = req.params;
-
-    const reviews = await Review.find({ worker: workerId })
-      .populate('client', 'username name')
-      .sort({ createdAt: -1 });
-
-    return res.send({ success: true, message: 'Reviews retrieved', reviews });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send({ success: false, message: 'Error retrieving reviews', error });
-  }
-};
-
 // Obtener todas las reseñas de un cliente
-export const getReviewsByClient = async (req, res) => {
+export const getAllClientReviews = async (req, res) => {
   try {
     const { clientId } = req.params;
 
-    const reviews = await Review.find({ client: clientId })
+    // Obtener todas las reseñas donde este cliente sea el receptor de la reseña
+    const reviews = await ClientReview.find({ client: clientId })
       .populate('worker', 'username name')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 });  // Ordenar las reseñas más recientes primero
 
-    return res.send({ success: true, message: 'Reviews retrieved', reviews });
+    if (reviews.length === 0) {
+      return res.status(404).send({ success: false, message: 'No reviews found for this client' });
+    }
+
+    return res.send({ success: true, message: 'Reviews retrieved successfully', reviews });
   } catch (error) {
     console.error(error);
     return res.status(500).send({ success: false, message: 'Error retrieving reviews', error });
