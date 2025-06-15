@@ -1,6 +1,6 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import {validateErrorWithoutImg} from './validate.error.js'
-import {existEmail, existUsername, findUser} from './db.validators.js'
+import {existEmail, existUsername, findUser, categoryNameExists} from './db.validators.js'
 
 // Validator para registro del usuario
 export const registerValidator = [
@@ -112,4 +112,57 @@ export const discountCommissionValidator = [
     .isFloat({ min: 0.01 }),
 
   validateErrorWithoutImg
+];
+
+
+// Validaciones para crear una nueva categoría
+export const addCategoryValidator = [
+    body('name', 'Category name cannot be empty')
+        .notEmpty()
+        .trim()
+        .isLength({ min: 1, max: 50 })
+        .withMessage('Category name must be between 1 and 50 characters')
+        .custom(categoryNameExists),
+    body('description', 'Description is too long')
+        .optional()
+        .trim()
+        .isLength({ max: 200 })
+        .withMessage('Description cannot exceed 200 characters'),
+        validateErrorWithoutImg
+];
+
+// Validaciones para actualizar una categoría
+export const updateCategoryValidator = [
+    param('id', 'Invalid category ID')
+        .isMongoId()
+        .withMessage('Category ID must be a valid MongoDB ObjectId'),
+    body('name', 'Category name cannot be empty')
+        .optional()
+        .notEmpty()
+        .trim()
+        .isLength({ min: 1, max: 50 })
+        .withMessage('Category name must be between 1 and 50 characters')
+        .custom(categoryNameExists),
+    body('description', 'Description is too long')
+        .optional()
+        .trim()
+        .isLength({ max: 200 })
+        .withMessage('Description cannot exceed 200 characters'),
+        validateErrorWithoutImg
+];
+
+// Validaciones para obtener categoría por ID
+export const getCategoryValidator = [
+    param('id', 'Invalid category ID')
+        .isMongoId()
+        .withMessage('Category ID must be a valid MongoDB ObjectId'),
+        validateErrorWithoutImg
+];
+
+// Validaciones para eliminar categoría
+export const deleteCategoryValidator = [
+    param('id', 'Invalid category ID')
+        .isMongoId()
+        .withMessage('Category ID must be a valid MongoDB ObjectId'),
+        validateErrorWithoutImg
 ];
