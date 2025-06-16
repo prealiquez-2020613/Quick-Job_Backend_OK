@@ -209,7 +209,6 @@ export const sendMessageValidator = [
 
 // --- Worker Review ---
 export const createWorkerReviewValidator = [
-  body('worker', 'Worker ID is required and must be valid').notEmpty().isMongoId(),
   body('client', 'Client ID is required and must be valid').notEmpty().isMongoId(),
   body('rating', 'Rating is required and must be between 1 and 5').notEmpty().isFloat({ min: 1, max: 5 }),
   body('comment')
@@ -235,7 +234,6 @@ export const updateWorkerReviewValidator = [
 
 // --- Client Review ---
 export const createClientReviewValidator = [
-  body('client', 'Client ID is required and must be valid').notEmpty().isMongoId(),
   body('worker', 'Worker ID is required and must be valid').notEmpty().isMongoId(),
   body('rating', 'Rating is required and must be between 1 and 5').notEmpty().isFloat({ min: 1, max: 5 }),
   body('comment')

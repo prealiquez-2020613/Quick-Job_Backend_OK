@@ -13,7 +13,7 @@ import { createJobRequestValidator, updateJobRequestStatusValidator } from '../.
 
 const router = Router();
 
-router.post('/jobrequests', [createJobRequestValidator, validateJwt, isClient], createJobRequest);
+router.post('/jobrequests', [createJobRequestValidator, validateJwt], createJobRequest);
 router.get('/jobrequests/client', [validateJwt, isClient], getClientJobRequests);
 router.get('/jobrequests/worker', [validateJwt, isWorker], getWorkerJobRequests);
 router.put('/jobrequests/:id/status', [updateJobRequestStatusValidator, validateJwt, isWorker], updateJobRequestStatus);
