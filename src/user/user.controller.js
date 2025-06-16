@@ -166,3 +166,39 @@ export const get = async (req, res) => {
         return res.status(500).send({ success: false, message: 'General Error', error })
     }
 }
+
+// LISTAR SOLO WORKERS
+export const getWorkers = async (req, res) => {
+    try {
+        const { limit = 20, skip = 0 } = req.query;
+        const workers = await User.find({ role: 'WORKER', userStatus: true })
+                                  .skip(skip)
+                                  .limit(limit);
+
+        if (workers.length === 0) return res.status(404).send({ success: false, message: 'No workers found' });
+
+        return res.send({ success: true, message: 'Workers found', users: workers, total: workers.length });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: 'Error fetching workers', error });
+    }
+};
+
+// LISTAR SOLO CLIENTES
+export const getClients = async (req, res) => {
+    try {
+        const { limit = 20, skip = 0 } = req.query;
+        const clients = await User.find({ role: 'CLIENT', userStatus: true })
+                                  .skip(skip)
+                                  .limit(limit);
+
+        if (clients.length === 0) return res.status(404).send({ success: false, message: 'No clients found' });
+
+        return res.send({ success: true, message: 'Clients found', users: clients, total: clients.length });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: 'Error fetching clients', error });
+    }
+}

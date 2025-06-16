@@ -6,7 +6,9 @@ import {
     deleteUser, 
     updateUser, 
     updatePassword, 
-    updateRole 
+    updateRole,
+    getWorkers,
+    getClients 
 } from './user.controller.js';
 
 import { 
@@ -33,5 +35,7 @@ api.put('/deleteUser/:userId', [validateJwt, isAdmin], deleteUser);
 api.put('/updateUser', [validateJwt, upload.single('image'), UpdateValidator], updateUser);
 api.put('/updateUserRole/:id', [validateJwt, isAdmin, updateRoleValidation], updateRole);
 api.put('/updatePasswordUser', [validateJwt, newPasswordValidation], updatePassword);
+api.get('/workers', getWorkers);
+api.get('/clients', getClients);
 
 export default api;
