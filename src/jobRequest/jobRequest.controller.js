@@ -10,8 +10,8 @@ export const createJobRequest = async (req, res) => {
     const clientUser = await User.findById(client);
     const workerUser = await User.findById(worker);
 
-    if (!clientUser || clientUser.role !== 'CLIENT') {
-      return res.status(403).send({ success: false, message: 'Only CLIENT users can send job requests' });
+    if (!clientUser) {
+      return res.status(403).send({ success: false, message: 'CLIENT not found' });
     }
 
     if (!workerUser || workerUser.role !== 'WORKER') {
