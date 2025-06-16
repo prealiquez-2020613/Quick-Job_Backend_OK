@@ -29,7 +29,7 @@ const api = Router();
 
 // RUTAS PRIVADAS
 api.get('/getAllUsers', [validateJwt, isAdmin], getAll);
-api.get('/findUser/:id', [validateJwt, isAdmin], get);
+api.get('/findUser/:id', get);
 api.put('/deleteAccount', [validateJwt], [deleteAccountValidation], deleteAccount);
 api.put('/deleteUser/:userId', [validateJwt, isAdmin], deleteUser);
 api.put('/updateUser', [validateJwt, upload.single('image'), UpdateValidator], updateUser);
