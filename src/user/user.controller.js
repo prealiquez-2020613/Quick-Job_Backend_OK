@@ -142,7 +142,7 @@ export const updatePassword = async (req, res) => {
 export const getAll = async (req, res) => {
     try {
         const { limit = 20, skip = 0 } = req.query
-        const users = await User.find().skip(skip).limit(limit)
+        const users = await User.find().skip(skip).limit(limit).populate('category')
 
         if (users.length === 0) return res.status(404).send({ success: false, message: 'Users not found' })
         return res.send({ success: true, message: 'Users found', users, total: users.length })
@@ -157,7 +157,7 @@ export const getAll = async (req, res) => {
 export const get = async (req, res) => {
     try {
         const { id } = req.params
-        const user = await User.findById(id)
+        const user = await User.findById(id).populate('category')
 
         if (!user) return res.status(404).send({ success: false, message: 'User not found' })
         return res.send({ success: true, message: 'User found', user })
