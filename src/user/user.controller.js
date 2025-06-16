@@ -171,7 +171,7 @@ export const get = async (req, res) => {
 export const getWorkers = async (req, res) => {
     try {
         const { limit = 20, skip = 0 } = req.query;
-        const workers = await User.find({ role: 'WORKER', userStatus: true })
+        const workers = await User.find({ role: 'WORKER', userStatus: true }).populate('category')
                                   .skip(skip)
                                   .limit(limit);
 
@@ -189,7 +189,7 @@ export const getWorkers = async (req, res) => {
 export const getClients = async (req, res) => {
     try {
         const { limit = 20, skip = 0 } = req.query;
-        const clients = await User.find({ role: 'CLIENT', userStatus: true })
+        const clients = await User.find({ role: 'CLIENT', userStatus: true }).populate('category')
                                   .skip(skip)
                                   .limit(limit);
 
