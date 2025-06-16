@@ -9,7 +9,7 @@ const api = Router();
 api.post('/addcategory', [validateJwt, isAdmin, addCategoryValidator], addCategory);
 
 // Obtener todas las categorías
-api.get('/allcategories', [validateJwt], allCategories);
+api.get('/allcategories', allCategories);
 
 // Obtener una categoría por ID
 api.get('/getcategory/:id', [validateJwt, getCategoryValidator], getCategoryById);
