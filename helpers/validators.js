@@ -189,9 +189,7 @@ export const createOrGetChatValidator = [
   body('participantId')
     .notEmpty()
     .withMessage('Participant ID is required')
-    .bail()
-    .custom((value) => mongoose.Types.ObjectId.isValid(value))
-    .withMessage('Participant ID must be a valid Mongo ID'),
+    .bail(),
   validateErrorWithoutImg
 ];
 
