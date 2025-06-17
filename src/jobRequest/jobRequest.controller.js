@@ -82,10 +82,6 @@ export const updateJobRequestStatus = async (req, res) => {
       return res.status(404).send({ success: false, message: 'Job request not found' });
     }
 
-    if (request.worker.toString() !== worker) {
-      return res.status(403).send({ success: false, message: 'You can only update your own received requests' });
-    }
-
     request.status = status;
     await request.save();
 

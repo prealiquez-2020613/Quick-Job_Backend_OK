@@ -14,9 +14,9 @@ import { createJobRequestValidator, updateJobRequestStatusValidator } from '../.
 const router = Router();
 
 router.post('/jobrequests', [createJobRequestValidator, validateJwt], createJobRequest);
-router.get('/jobrequests/client', [validateJwt, isClient], getClientJobRequests);
-router.get('/jobrequests/worker', [validateJwt, isWorker], getWorkerJobRequests);
-router.put('/jobrequests/:id/status', [updateJobRequestStatusValidator, validateJwt, isWorker], updateJobRequestStatus);
-router.delete('/deletejobrequests/:id', [validateJwt, isClient], deleteJobRequest);
+router.get('/jobrequests/client', [validateJwt], getClientJobRequests);
+router.get('/jobrequests/worker', [validateJwt], getWorkerJobRequests);
+router.put('/jobrequests/:id', [updateJobRequestStatusValidator, validateJwt], updateJobRequestStatus);
+router.delete('/deletejobrequests/:id', [validateJwt], deleteJobRequest);
 
 export default router;
