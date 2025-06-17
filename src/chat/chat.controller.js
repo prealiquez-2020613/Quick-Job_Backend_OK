@@ -1,38 +1,24 @@
 import Chat from './chat.model.js';
 import User from '../user/user.model.js';
+import { getOrCreateChat } from '../../services/chat.service.js';
 
-// Crear o reutilizar un chat entre dos usuarios
 export const createOrGetChat = async (req, res) => {
   try {
     const userId = req.user.uid;
     const { participantId } = req.body;
 
-    if (!participantId) {
-      return res.status(400).send({ success: false, message: 'Participant ID is required' });
-    }
+    const { chat, isNew } = await getOrCreateChat(userId, participantId);
 
-    const existingChat = await Chat.findOne({
-      participants: { $all: [userId, participantId], $size: 2 }
-    });
-
-    if (existingChat) {
-      return res.send({ success: true, chat: existingChat });
-    }
-
-    const newChat = new Chat({
-      participants: [userId, participantId],
-      messages: []
-    });
-
-    await newChat.save();
-    return res.status(201).send({ success: true, message: 'Chat created', chat: newChat });
+    return res
+      .status(isNew ? 201 : 200)
+      .send({ success: true, chat, message: isNew ? 'Chat created' : 'Chat found' });
   } catch (error) {
-    console.error(error);
-    return res.status(500).send({ success: false, message: 'Error creating chat', error });
+    return res
+      .status(error.message === 'Participant ID is required' ? 400 : 500)
+      .send({ success: false, message: error.message });
   }
 };
 
-// Enviar un mensaje
 export const sendMessage = async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -58,12 +44,10 @@ export const sendMessage = async (req, res) => {
 
     return res.send({ success: true, message: 'Message sent', chat });
   } catch (error) {
-    console.error(error);
     return res.status(500).send({ success: false, message: 'Error sending message', error });
   }
 };
 
-// Obtener todos los chats del usuario (último mensaje + participantes)
 export const getUserChats = async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -80,28 +64,32 @@ export const getUserChats = async (req, res) => {
 
     return res.send({ success: true, chats: formattedChats });
   } catch (error) {
-    console.error(error);
     return res.status(500).send({ success: false, message: 'Error fetching chats', error });
   }
 };
 
-// Obtener un chat específico por ID
 export const getChatById = async (req, res) => {
   try {
     const { chatId } = req.params;
-    const userId = req.user.uid;
+    const userId = req.user?.uid;
 
     const chat = await Chat.findById(chatId)
       .populate('participants', 'username name')
       .populate('messages.sender', 'username name');
 
-    if (!chat || !chat.participants.some(p => p._id.toString() === userId)) {
+    if (!chat) {
+      return res.status(404).send({ success: false, message: 'Chat no encontrado' });
+    }
+
+    const participantIds = chat.participants.map(p => p._id.toString());
+    const isUserParticipant = participantIds.includes(userId);
+
+    if (!isUserParticipant) {
       return res.status(403).send({ success: false, message: 'Access denied' });
     }
 
     return res.send({ success: true, chat });
   } catch (error) {
-    console.error(error);
     return res.status(500).send({ success: false, message: 'Error retrieving chat', error });
   }
 };

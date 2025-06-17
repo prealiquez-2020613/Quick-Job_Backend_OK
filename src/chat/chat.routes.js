@@ -10,8 +10,8 @@ import { createOrGetChatValidator, sendMessageValidator } from '../../helpers/va
 
 const api = Router();
 
-api.post('/createchat', [ createOrGetChatValidator], createOrGetChat);
-api.post('/message', [ sendMessageValidator], sendMessage);
+api.post('/createchat', [ validateJwt, createOrGetChatValidator], createOrGetChat);
+api.post('/message', [ validateJwt, sendMessageValidator], sendMessage);
 api.get('/allchat', [validateJwt], getUserChats);
 api.get('/get/:chatId', [validateJwt], getChatById);
 
