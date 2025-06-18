@@ -11,6 +11,7 @@ import paymentRoutes from '../src/payment/payment.routes.js'
 import rechargeRoutes from '../src/recharge/recharge.routes.js'
 import chatRoutes from '../src/chat/chat.routes.js'
 import jobRequestRoutes from '../src/jobRequest/jobRequest.routes.js'
+import reviewRoutes from '../src/review/review.routes.js'
 import { initializeDatabase } from './initSetup.js'
 
 import jwt from 'jsonwebtoken'
@@ -38,6 +39,7 @@ const routes = (app) => {
   app.use('/v1/recharge', rechargeRoutes)
   app.use('/v1/chat', chatRoutes)
   app.use('/v1/jobRequest', jobRequestRoutes)
+  app.use('/v1/review', reviewRoutes)
 }
 
 export const initServer = async () => {
