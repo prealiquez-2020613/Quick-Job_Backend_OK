@@ -157,3 +157,23 @@ export const deleteReview = async (req, res) => {
     return res.status(500).send({ success: false, message: 'Error deleting review', error });
   }
 };
+
+// Obtener todas las reseñas recibidas por un usuario (cuando el usuario es el receptor)
+export const getUserReceivedReviews = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const reviews = await Review.find({ receiver: userId })
+      .populate('sender', 'username name')
+      .sort({ createdAt: -1 });
+
+    if (reviews.length === 0) {
+      return res.status(404).send({ success: false, message: 'No reviews found for this user' });
+    }
+
+    return res.send({ success: true, message: 'Received reviews retrieved successfully', reviews });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ success: false, message: 'Error retrieving received reviews', error });
+  }
+};
