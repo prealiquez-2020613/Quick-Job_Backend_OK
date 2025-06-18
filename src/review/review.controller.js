@@ -1,5 +1,6 @@
 import Review from './review.model.js';
 import User from '../user/user.model.js';
+import JobRequest from '../jobRequest/jobRequest.model.js';
 
 // Función para actualizar el promedio de calificación de un usuario
 const updateAverageRating = async (userId) => {
@@ -43,6 +44,21 @@ export const createReview = async (req, res) => {
     const existingReview = await Review.findOne({ sender, receiver });
     if (existingReview) {
       return res.status(400).send({ success: false, message: 'You already reviewed this user' });
+    }
+
+    const jobRequest = await JobRequest.findOne({
+      $or: [
+        { client: sender, worker: receiver },
+        { client: receiver, worker: sender }
+      ],
+      status: { $ne: 'PENDING' }
+    });
+
+    if (!jobRequest) {
+      return res.status(400).send({
+        success: false,
+        message: 'You cannot review someone you have not worked with'
+      });
     }
 
     const review = new Review({ sender, receiver, rating, comment });
