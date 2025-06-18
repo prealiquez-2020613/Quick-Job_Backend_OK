@@ -35,9 +35,10 @@ export const loginValidator = [
 export const UpdateValidator = [
     body('name', 'Name cannot be empty').optional().notEmpty(),
     body('surname', 'Surname cannot be empty').optional().notEmpty(),
-    body('email', 'Email cannot be empty or is not a valid email').optional().notEmpty().isEmail().custom(existEmail),
-    body('username', 'Username cannot be empty').optional().notEmpty().toLowerCase().custom(existUsername),
+    body('email', 'Email cannot be empty or is not a valid email').optional().notEmpty().isEmail(),
+    body('username', 'Username cannot be empty').optional().notEmpty().toLowerCase(),
     body('phone', 'Phone cannot be empty or is not a valid phone').optional().notEmpty(),
+    body('role', 'Role must be one of ADMIN, CLIENT, or WORKER').isIn(['ADMIN', 'CLIENT', 'WORKER']).optional().notEmpty(),
     body('location', 'Location must be one of the predefined options').optional().notEmpty()
         .isIn([
             'Alta Verapaz', 'Baja Verapaz', 'Chimaltenango', 'Chiquimula', 'Escuintla', 'Guatemala',

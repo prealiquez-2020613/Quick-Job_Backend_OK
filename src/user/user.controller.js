@@ -56,6 +56,20 @@ export const updateUser = async (req, res) => {
         const user = await User.findById(id);
         if (!user) return res.status(404).send({ success: false, message: 'User not found' });
 
+        if (newdata.email) {
+        const existingEmailUser = await User.findOne({ email: newdata.email });
+        if (existingEmailUser && existingEmailUser._id.toString() !== id) {
+            return res.status(400).send({ success: false, message: 'Email already exists' });
+        }
+        }
+
+        if (newdata.username) {
+        const existingUsernameUser = await User.findOne({ username: newdata.username });
+        if (existingUsernameUser && existingUsernameUser._id.toString() !== id) {
+            return res.status(400).send({ success: false, message: 'Username already exists' });
+        }
+        }
+
         // Si se sube nueva imagen de perfil
         if (req.file) {
             const stream = cloudinary.uploader.upload_stream(
