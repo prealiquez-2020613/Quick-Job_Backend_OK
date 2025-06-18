@@ -52,7 +52,6 @@ export const updateUser = async (req, res) => {
         const newdata = req.body;
 
         if (newdata.password) return res.status(403).send({ message: 'You cannot update the password here' });
-        if (newdata.role) return res.status(403).send({ message: 'You cannot update the role here' });
 
         const user = await User.findById(id);
         if (!user) return res.status(404).send({ success: false, message: 'User not found' });
@@ -201,4 +200,15 @@ export const getClients = async (req, res) => {
         console.error(error);
         return res.status(500).send({ success: false, message: 'Error fetching clients', error });
     }
+}
+
+// LISTAR USUARIO LOGEADO
+export const getLoggedUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.uid).populate('category')
+    if (!user) return res.status(404).send({ success: false, message: 'User not found' })
+    return res.send({ success: true, message: 'User found', user })
+  } catch (error) {
+    return res.status(500).send({ success: false, message: 'Error al obtener los datos del usuario', error })
+  }
 }

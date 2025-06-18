@@ -8,7 +8,8 @@ import {
     updatePassword, 
     updateRole,
     getWorkers,
-    getClients 
+    getClients,
+    getLoggedUser
 } from './user.controller.js';
 
 import { 
@@ -37,5 +38,6 @@ api.put('/updateUserRole/:id', [validateJwt, isAdmin, updateRoleValidation], upd
 api.put('/updatePasswordUser', [validateJwt, newPasswordValidation], updatePassword);
 api.get('/workers', getWorkers);
 api.get('/clients', getClients);
+api.get('/findUser', validateJwt, getLoggedUser)
 
 export default api;
