@@ -16,7 +16,7 @@ const updateAverageRating = async (userId) => {
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     const averageRating = totalRating / reviews.length;
 
-    await User.findByIdAndUpdate(userId, { ratingAverage: averageRating });
+    await User.findByIdAndUpdate(userId, { ratingAverage: parseFloat(averageRating.toFixed(2)) });
   } catch (error) {
     console.error('Error updating average rating:', error);
   }
