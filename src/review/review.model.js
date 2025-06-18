@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
-const workerReviewSchema = new mongoose.Schema({
-  worker: {
+const ReviewSchema = new mongoose.Schema({
+  sender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  client: {
+  receiver: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -23,4 +23,4 @@ const workerReviewSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-export default mongoose.model('WorkerReview', workerReviewSchema);
+export default mongoose.model('Review', ReviewSchema);
