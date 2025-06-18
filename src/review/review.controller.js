@@ -80,7 +80,7 @@ export const getSentReviews = async (req, res) => {
     const sender = req.user.uid;
 
     const reviews = await Review.find({ sender })
-      .populate('receiver', 'username name')
+      .populate('receiver', 'username name profileImage')
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
@@ -100,7 +100,7 @@ export const getReceivedReviews = async (req, res) => {
     const receiver = req.user.uid;
 
     const reviews = await Review.find({ receiver })
-      .populate('sender', 'username name')
+      .populate('sender', 'username name profileImage')
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
@@ -180,7 +180,7 @@ export const getUserReceivedReviews = async (req, res) => {
     const { userId } = req.params;
 
     const reviews = await Review.find({ receiver: userId })
-      .populate('sender', 'username name')
+      .populate('sender', 'username name profileImage')
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {

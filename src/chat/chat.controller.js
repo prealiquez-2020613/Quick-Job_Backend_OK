@@ -53,7 +53,7 @@ export const getUserChats = async (req, res) => {
     const userId = req.user.uid;
 
     const chats = await Chat.find({ participants: userId })
-      .populate('participants', 'username name')
+      .populate('participants', 'username name surname profileImage')
       .sort({ updatedAt: -1 });
 
     const formattedChats = chats.map(chat => ({
@@ -74,7 +74,7 @@ export const getChatById = async (req, res) => {
     const userId = req.user?.uid;
 
     const chat = await Chat.findById(chatId)
-      .populate('participants', 'username name')
+      .populate('participants', 'username name surname profileImage')
       .populate('messages.sender', 'username name');
 
     if (!chat) {
