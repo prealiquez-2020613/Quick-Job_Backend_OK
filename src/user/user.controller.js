@@ -52,10 +52,23 @@ export const updateUser = async (req, res) => {
         const newdata = req.body;
 
         if (newdata.password) return res.status(403).send({ message: 'You cannot update the password here' });
-        if (newdata.role) return res.status(403).send({ message: 'You cannot update the role here' });
 
         const user = await User.findById(id);
         if (!user) return res.status(404).send({ success: false, message: 'User not found' });
+
+        if (newdata.email) {
+        const existingEmailUser = await User.findOne({ email: newdata.email });
+        if (existingEmailUser && existingEmailUser._id.toString() !== id) {
+            return res.status(400).send({ success: false, message: 'Email already exists' });
+        }
+        }
+
+        if (newdata.username) {
+        const existingUsernameUser = await User.findOne({ username: newdata.username });
+        if (existingUsernameUser && existingUsernameUser._id.toString() !== id) {
+            return res.status(400).send({ success: false, message: 'Username already exists' });
+        }
+        }
 
         // Si se sube nueva imagen de perfil
         if (req.file) {
@@ -172,8 +185,9 @@ export const getWorkers = async (req, res) => {
     try {
         const { limit = 20, skip = 0 } = req.query;
         const workers = await User.find({ role: 'WORKER', userStatus: true }).populate('category')
-                                  .skip(skip)
-                                  .limit(limit);
+                                .sort({ createdAt: -1 })
+                                .skip(skip)
+                                .limit(limit)
 
         if (workers.length === 0) return res.status(404).send({ success: false, message: 'No workers found' });
 
@@ -201,4 +215,15 @@ export const getClients = async (req, res) => {
         console.error(error);
         return res.status(500).send({ success: false, message: 'Error fetching clients', error });
     }
+}
+
+// LISTAR USUARIO LOGEADO
+export const getLoggedUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.uid).populate('category')
+    if (!user) return res.status(404).send({ success: false, message: 'User not found' })
+    return res.send({ success: true, message: 'User found', user })
+  } catch (error) {
+    return res.status(500).send({ success: false, message: 'Error al obtener los datos del usuario', error })
+  }
 }

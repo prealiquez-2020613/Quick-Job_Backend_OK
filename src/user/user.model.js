@@ -75,6 +75,6 @@ const userSchema = Schema({
         type: Boolean,
         enum: [true, false]
     }
-});
+}, { timestamps: true });
 
 export default model('User', userSchema);

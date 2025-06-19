@@ -1,5 +1,6 @@
 import Review from './review.model.js';
 import User from '../user/user.model.js';
+import JobRequest from '../jobRequest/jobRequest.model.js';
 
 // Función para actualizar el promedio de calificación de un usuario
 const updateAverageRating = async (userId) => {
@@ -45,6 +46,21 @@ export const createReview = async (req, res) => {
       return res.status(400).send({ success: false, message: 'You already reviewed this user' });
     }
 
+    const jobRequest = await JobRequest.findOne({
+      $or: [
+        { client: sender, worker: receiver },
+        { client: receiver, worker: sender }
+      ],
+      status: { $ne: 'PENDING' }
+    });
+
+    if (!jobRequest) {
+      return res.status(400).send({
+        success: false,
+        message: 'You cannot review someone you have not worked with'
+      });
+    }
+
     const review = new Review({ sender, receiver, rating, comment });
     await review.save();
 
@@ -64,7 +80,7 @@ export const getSentReviews = async (req, res) => {
     const sender = req.user.uid;
 
     const reviews = await Review.find({ sender })
-      .populate('receiver', 'username name')
+      .populate('receiver', 'username name profileImage')
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
@@ -84,7 +100,7 @@ export const getReceivedReviews = async (req, res) => {
     const receiver = req.user.uid;
 
     const reviews = await Review.find({ receiver })
-      .populate('sender', 'username name')
+      .populate('sender', 'username name profileImage')
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
@@ -161,10 +177,10 @@ export const deleteReview = async (req, res) => {
 // Obtener todas las reseñas recibidas por un usuario (cuando el usuario es el receptor)
 export const getUserReceivedReviews = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { workerId } = req.params;
 
-    const reviews = await Review.find({ receiver: userId })
-      .populate('sender', 'username name')
+    const reviews = await Review.find({ receiver: workerId })
+      .populate('sender', 'username name profileImage')
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {

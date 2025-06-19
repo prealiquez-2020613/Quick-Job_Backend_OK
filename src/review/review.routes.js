@@ -15,7 +15,7 @@ const api = Router();
 api.post('/createReview', [validateJwt, createReviewValidator], createReview);
 api.get('/reviews/sent', [validateJwt], getSentReviews);
 api.get('/reviews/received', [validateJwt], getReceivedReviews);
-api.get('/reviews/received/:userId', [validateJwt], getUserReceivedReviews);
+api.get('/reviews/user/:workerId', getUserReceivedReviews);
 api.put('/updateReview/:id', [validateJwt, updateReviewValidator], updateReview);
 api.delete('/deleteReview/:id', [validateJwt], deleteReview);
 
