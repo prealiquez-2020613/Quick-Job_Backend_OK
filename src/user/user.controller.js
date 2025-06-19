@@ -185,10 +185,9 @@ export const getWorkers = async (req, res) => {
     try {
         const { limit = 20, skip = 0 } = req.query;
         const workers = await User.find({ role: 'WORKER', userStatus: true }).populate('category')
-                                  .skip(skip)
-                                  .limit(limit)
-                                  .select('name surname category ratingAverage profileImage createdAt')
-                                  .sort({ createdAt: -1 });
+                                .sort({ createdAt: -1 })
+                                .skip(skip)
+                                .limit(limit)
 
         if (workers.length === 0) return res.status(404).send({ success: false, message: 'No workers found' });
 
