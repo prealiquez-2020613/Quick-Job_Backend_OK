@@ -30,19 +30,20 @@ export const createReview = async (req, res) => {
     const sender = req.user.uid;
 
     if (!receiver || !rating) {
-      return res.status(400).json({ success: false, message: 'Receiver and rating are required' });
+      return res.status(400).send({ success: false, message: 'Receiver and rating are required' });
     }
 
     const senderUser = await User.findById(sender);
     const receiverUser = await User.findById(receiver);
 
     if (!senderUser || !receiverUser) {
-      return res.status(404).json({ success: false, message: 'Sender or receiver not found' });
+      return res.status(404).send({ success: false, message: 'Sender or receiver not found' });
     }
 
+    // Verificar que el sender no haya hecho una review a este receiver en el mismo orden
     const existingReview = await Review.findOne({ sender, receiver });
     if (existingReview) {
-      return res.status(400).json({ success: false, message: 'You already reviewed this user' });
+      return res.status(400).send({ success: false, message: 'You already reviewed this user' });
     }
 
     const jobRequest = await JobRequest.findOne({
@@ -54,7 +55,7 @@ export const createReview = async (req, res) => {
     });
 
     if (!jobRequest) {
-      return res.status(400).json({
+      return res.status(400).send({
         success: false,
         message: 'You cannot review someone you have not worked with'
       });
@@ -63,12 +64,13 @@ export const createReview = async (req, res) => {
     const review = new Review({ sender, receiver, rating, comment });
     await review.save();
 
+    // Actualizar promedio de calificación del receptor
     await updateAverageRating(receiver);
 
-    return res.status(201).json({ success: true, message: 'Review submitted successfully', review });
+    return res.status(201).send({ success: true, message: 'Review submitted successfully', review });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error submitting review', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error submitting review', error });
   }
 };
 
@@ -82,13 +84,13 @@ export const getSentReviews = async (req, res) => {
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
-      return res.status(404).json({ success: false, message: 'No reviews found for this user' });
+      return res.status(404).send({ success: false, message: 'No reviews found for this user' });
     }
 
-    return res.status(200).json({ success: true, message: 'Sent reviews retrieved successfully', reviews });
+    return res.send({ success: true, message: 'Sent reviews retrieved successfully', reviews });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error retrieving sent reviews', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error retrieving sent reviews', error });
   }
 };
 
@@ -102,13 +104,13 @@ export const getReceivedReviews = async (req, res) => {
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
-      return res.status(404).json({ success: false, message: 'No reviews found for this user' });
+      return res.status(404).send({ success: false, message: 'No reviews found for this user' });
     }
 
-    return res.status(200).json({ success: true, message: 'Received reviews retrieved successfully', reviews });
+    return res.send({ success: true, message: 'Received reviews retrieved successfully', reviews });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error retrieving received reviews', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error retrieving received reviews', error });
   }
 };
 
@@ -121,23 +123,25 @@ export const updateReview = async (req, res) => {
 
     const review = await Review.findById(id);
     if (!review) {
-      return res.status(404).json({ success: false, message: 'Review not found' });
+      return res.status(404).send({ success: false, message: 'Review not found' });
     }
 
     if (review.sender.toString() !== loggedUserId) {
-      return res.status(403).json({ success: false, message: 'You can only update your own reviews' });
+      return res.status(403).send({ success: false, message: 'You can only update your own reviews' });
     }
 
     if (rating) review.rating = rating;
     if (comment) review.comment = comment;
 
     await review.save();
+
+    // Actualizar el promedio del receptor
     await updateAverageRating(review.receiver);
 
-    return res.status(200).json({ success: true, message: 'Review updated successfully', review });
+    return res.send({ success: true, message: 'Review updated successfully', review });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error updating review', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error updating review', error });
   }
 };
 
@@ -149,21 +153,24 @@ export const deleteReview = async (req, res) => {
 
     const review = await Review.findById(id);
     if (!review) {
-      return res.status(404).json({ success: false, message: 'Review not found' });
+      return res.status(404).send({ success: false, message: 'Review not found' });
     }
 
     if (review.sender.toString() !== loggedUserId) {
-      return res.status(403).json({ success: false, message: 'You can only delete your own reviews' });
+      return res.status(403).send({ success: false, message: 'You can only delete your own reviews' });
     }
 
     const receiverId = review.receiver;
+
     await review.deleteOne();
+
+    // Actualizar el promedio de calificación del receptor
     await updateAverageRating(receiverId);
 
-    return res.status(200).json({ success: true, message: 'Review deleted successfully', review });
+    return res.send({ success: true, message: 'Review deleted successfully', review });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error deleting review', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error deleting review', error });
   }
 };
 
@@ -177,12 +184,12 @@ export const getUserReceivedReviews = async (req, res) => {
       .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
-      return res.status(404).json({ success: false, message: 'No reviews found for this user' });
+      return res.status(404).send({ success: false, message: 'No reviews found for this user' });
     }
 
-    return res.status(200).json({ success: true, message: 'Received reviews retrieved successfully', reviews });
+    return res.send({ success: true, message: 'Received reviews retrieved successfully', reviews });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error retrieving received reviews', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error retrieving received reviews', error });
   }
 };

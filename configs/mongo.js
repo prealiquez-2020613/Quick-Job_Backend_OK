@@ -22,7 +22,7 @@ export const connect = async()=>{
         })
 
         await mongoose.connect(
-            `${process.env.URI_MONGO}`,
+            `${process.env.DB_SERVICE}://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
             {
                 maxPoolSize: 50,
                 serverSelectionTimeoutMS: 5000

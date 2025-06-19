@@ -1,59 +1,46 @@
-'use strict';
+'use strict'
 
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
 
 export const validateJwt = async (req, res, next) => {
-  try {
-    const secretKey = process.env.SECRET_KEY;
-    const { authorization } = req.headers;
+    try {
+        let secretKey = process.env.SECRET_KEY
+        let { authorization } = req.headers
 
-    if (!authorization || !authorization.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized. Token missing or malformed.'
-      });
+        if (!authorization) {
+            return res.status(401).send({ message: 'Unauthorized, token missing' })
+        }
+
+        let user = jwt.verify(authorization, secretKey)
+
+        req.user = user
+        
+        next()
+
+    } catch (err) {
+        console.error(err)
+        return res.status(401).send({ message: 'Invalid token or expired' })
     }
+}
 
-    const token = authorization.split(' ')[1];
-    const user = jwt.verify(token, secretKey);
-    req.user = user;
-
-    next();
-  } catch (err) {
-    console.error(err);
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid or expired token.'
-    });
-  }
-};
 
 export const isAdmin = (req, res, next) => {
-  if (req.user.role !== 'ADMIN') {
-    return res.status(403).json({
-      success: false,
-      message: 'Access denied. Admins only.'
-    });
-  }
-  next();
-};
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).send({ message: 'Forbidden, only admins allowed' })
+    }
+    next()
+}
 
 export const isClient = (req, res, next) => {
-  if (req.user.role !== 'CLIENT') {
-    return res.status(403).json({
-      success: false,
-      message: 'Access denied. Clients only.'
-    });
-  }
-  next();
-};
+    if (req.user.role !== 'CLIENT') {
+        return res.status(403).send({ message: 'Forbidden, only clients allowed' })
+    }
+    next()
+}
 
 export const isWorker = (req, res, next) => {
-  if (req.user.role !== 'WORKER') {
-    return res.status(403).json({
-      success: false,
-      message: 'Access denied. Workers only.'
-    });
-  }
-  next();
-};
+    if (req.user.role !== 'WORKER') {
+        return res.status(403).send({ message: 'Forbidden, only worker allowed' })
+    }
+    next()
+}

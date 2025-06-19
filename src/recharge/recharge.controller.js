@@ -8,9 +8,10 @@ export const addRecharge = async (req, res) => {
     const { amount, method } = req.body;
 
     if (!amount || amount <= 0) {
-      return res.status(400).json({ success: false, message: 'Invalid recharge amount' });
+      return res.status(400).send({ success: false, message: 'Invalid recharge amount' });
     }
 
+    
     const payment = new Payment({
       user: userId,
       amount,
@@ -20,12 +21,17 @@ export const addRecharge = async (req, res) => {
     });
     await payment.save();
 
+    
     let recharge = await Recharge.findOne({ user: userId });
     if (!recharge) {
       recharge = new Recharge({ user: userId });
     }
 
-    recharge.balance = Number(recharge.balance) + Number(amount);
+    let number1 = recharge.balance * 1;
+    let number2 = amount * 1;
+    let total = number1 + number2;
+    
+    recharge.balance = total;
     recharge.history.push({
       amount,
       reference: payment._id
@@ -33,7 +39,7 @@ export const addRecharge = async (req, res) => {
 
     await recharge.save();
 
-    return res.status(201).json({
+    return res.status(201).send({
       success: true,
       message: 'Recharge added successfully',
       balance: recharge.balance,
@@ -42,7 +48,7 @@ export const addRecharge = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error adding recharge', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error adding recharge', error });
   }
 };
 
@@ -55,14 +61,14 @@ export const getRechargeInfo = async (req, res) => {
       .populate('history.reference', 'amount method createdAt');
 
     if (!recharge) {
-      return res.status(200).json({ success: true, balance: 0, history: [] });
+      return res.send({ success: true, balance: 0, history: [] });
     }
 
-    return res.status(200).json({ success: true, balance: recharge.balance, history: recharge.history });
+    return res.send({ success: true, balance: recharge.balance, history: recharge.history });
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error fetching recharge info', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error fetching recharge info', error });
   }
 };
 
@@ -73,19 +79,20 @@ export const discountCommission = async (req, res) => {
     const { jobAmount } = req.body;
 
     if (!jobAmount || jobAmount <= 0) {
-      return res.status(400).json({ success: false, message: 'Invalid job amount' });
+      return res.status(400).send({ success: false, message: 'Invalid job amount' });
     }
 
     const commission = jobAmount * 0.10;
 
     const recharge = await Recharge.findOne({ user: userId });
     if (!recharge || recharge.balance < commission) {
-      return res.status(400).json({
+      return res.status(400).send({
         success: false,
         message: 'Insufficient balance to cover commission.'
       });
     }
 
+    // Descontar del balance
     recharge.balance -= commission;
     recharge.history.push({
       amount: -commission,
@@ -93,6 +100,7 @@ export const discountCommission = async (req, res) => {
     });
     await recharge.save();
 
+    // Registrar como un nuevo Payment tipo 'COMMISSION'
     const payment = new Payment({
       user: userId,
       amount: commission,
@@ -102,7 +110,7 @@ export const discountCommission = async (req, res) => {
     });
     await payment.save();
 
-    return res.status(200).json({
+    return res.send({
       success: true,
       message: 'Commission successfully deducted.',
       newBalance: recharge.balance,
@@ -111,6 +119,6 @@ export const discountCommission = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error deducting commission', error: error.message });
+    return res.status(500).send({ success: false, message: 'Error deducting commission', error });
   }
 };
