@@ -177,9 +177,9 @@ export const deleteReview = async (req, res) => {
 // Obtener todas las reseñas recibidas por un usuario (cuando el usuario es el receptor)
 export const getUserReceivedReviews = async (req, res) => {
   try {
-    const userId = req.user.uid;
+    const { workerId } = req.params;
 
-    const reviews = await Review.find({ receiver: userId })
+    const reviews = await Review.find({ receiver: workerId })
       .populate('sender', 'username name profileImage')
       .sort({ createdAt: -1 });
 
