@@ -85,41 +85,45 @@ export const register = async (req, res) => {
 
 //Login
 export const login = async (req, res) => {
-    try {
-        const { identifier, password } = req.body;
+  try {
+    const { identifier, password } = req.body;
 
-        if (!identifier || !password) {
-            return res.status(400).json({ success: false, message: 'Username/email and password are required' });
-        }
-
-        const user = await User.findOne({
-            $or: [
-                { username: identifier.toLowerCase() },
-                { email: identifier.toLowerCase() }
-            ]
-        });
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
-        const isPasswordValid = await checkPassword(user.password, password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ success: false, message: 'Invalid password' });
-        }
-
-        const loggedUser = {
-            uid: user._id,
-            name: user.name,
-            username: user.username,
-            role: user.role
-        };
-
-        const token = await generateJwt(loggedUser);
-
-        return res.json({ success: true, message: `Welcome, ${user.name}`, loggedUser, token });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'General error with login function', error });
+    if (!identifier || !password) {
+      return res.status(400).json({ success: false, message: 'Username/email and password are required' });
     }
+
+    const user = await User.findOne({
+      $or: [
+        { username: identifier.toLowerCase() },
+        { email: identifier.toLowerCase() }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (!user.userStatus) {
+      return res.status(403).json({ success: false, message: 'Cuenta deshabilitada. Contacta al administrador.' });
+    }
+
+    const isPasswordValid = await checkPassword(user.password, password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: 'Invalid password' });
+    }
+
+    const loggedUser = {
+      uid: user._id,
+      name: user.name,
+      username: user.username,
+      role: user.role
+    };
+
+    const token = await generateJwt(loggedUser);
+
+    return res.json({ success: true, message: `Welcome, ${user.name}`, loggedUser, token });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'General error with login function', error });
+  }
 };
