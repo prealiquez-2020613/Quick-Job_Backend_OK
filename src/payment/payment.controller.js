@@ -7,7 +7,7 @@ export const createPayment = async (req, res) => {
     const { amount, method, type } = req.body;
 
     if (!amount || !method || !type) {
-      return res.status(400).send({ success: false, message: 'Amount, method and type are required' });
+      return res.status(400).json({ success: false, message: 'Amount, method and type are required' });
     }
 
     const payment = new Payment({
@@ -20,14 +20,14 @@ export const createPayment = async (req, res) => {
 
     await payment.save();
 
-    return res.status(201).send({
+    return res.status(201).json({
       success: true,
       message: 'Payment recorded',
       payment
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ success: false, message: 'Error creating payment', error });
+    return res.status(500).json({ success: false, message: 'Error creating payment', error: error.message });
   }
 };
 
@@ -38,9 +38,9 @@ export const getUserPayments = async (req, res) => {
 
     const payments = await Payment.find({ user: userId }).sort({ createdAt: -1 });
 
-    return res.send({ success: true, payments });
+    return res.status(200).json({ success: true, payments });
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ success: false, message: 'Error fetching payments', error });
+    return res.status(500).json({ success: false, message: 'Error fetching payments', error: error.message });
   }
 };

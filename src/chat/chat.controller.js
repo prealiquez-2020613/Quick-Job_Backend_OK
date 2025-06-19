@@ -11,11 +11,11 @@ export const createOrGetChat = async (req, res) => {
 
     return res
       .status(isNew ? 201 : 200)
-      .send({ success: true, chat, message: isNew ? 'Chat created' : 'Chat found' });
+      .json({ success: true, chat, message: isNew ? 'Chat created' : 'Chat found' });
   } catch (error) {
     return res
       .status(error.message === 'Participant ID is required' ? 400 : 500)
-      .send({ success: false, message: error.message });
+      .json({ success: false, message: error.message });
   }
 };
 
@@ -25,12 +25,12 @@ export const sendMessage = async (req, res) => {
     const { chatId, text } = req.body;
 
     if (!text || !chatId) {
-      return res.status(400).send({ success: false, message: 'Message text and chat ID are required' });
+      return res.status(400).json({ success: false, message: 'Message text and chat ID are required' });
     }
 
     const chat = await Chat.findById(chatId);
     if (!chat || !chat.participants.includes(userId)) {
-      return res.status(403).send({ success: false, message: 'Not authorized or chat not found' });
+      return res.status(403).json({ success: false, message: 'Not authorized or chat not found' });
     }
 
     const message = {
@@ -42,9 +42,9 @@ export const sendMessage = async (req, res) => {
     chat.messages.push(message);
     await chat.save();
 
-    return res.send({ success: true, message: 'Message sent', chat });
+    return res.status(200).json({ success: true, message: 'Message sent', chat });
   } catch (error) {
-    return res.status(500).send({ success: false, message: 'Error sending message', error });
+    return res.status(500).json({ success: false, message: 'Error sending message', error: error.message });
   }
 };
 
@@ -62,9 +62,9 @@ export const getUserChats = async (req, res) => {
       lastMessage: chat.messages[chat.messages.length - 1] || null
     }));
 
-    return res.send({ success: true, chats: formattedChats });
+    return res.status(200).json({ success: true, chats: formattedChats });
   } catch (error) {
-    return res.status(500).send({ success: false, message: 'Error fetching chats', error });
+    return res.status(500).json({ success: false, message: 'Error fetching chats', error: error.message });
   }
 };
 
@@ -78,18 +78,18 @@ export const getChatById = async (req, res) => {
       .populate('messages.sender', 'username name');
 
     if (!chat) {
-      return res.status(404).send({ success: false, message: 'Chat no encontrado' });
+      return res.status(404).json({ success: false, message: 'Chat no encontrado' });
     }
 
     const participantIds = chat.participants.map(p => p._id.toString());
     const isUserParticipant = participantIds.includes(userId);
 
     if (!isUserParticipant) {
-      return res.status(403).send({ success: false, message: 'Access denied' });
+      return res.status(403).json({ success: false, message: 'Access denied' });
     }
 
-    return res.send({ success: true, chat });
+    return res.status(200).json({ success: true, chat });
   } catch (error) {
-    return res.status(500).send({ success: false, message: 'Error retrieving chat', error });
+    return res.status(500).json({ success: false, message: 'Error retrieving chat', error: error.message });
   }
 };
